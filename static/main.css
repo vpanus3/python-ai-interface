@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "ColfaxAI";
+  src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2)
+      format("woff2"),
+    url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff) format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ColfaxAI";
+  src: url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff2) format("woff2"),
+    url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff) format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+body,
+input {
+  font-size: 16px;
+  line-height: 24px;
+  color: #353740;
+  font-family: "ColfaxAI", Helvetica, sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+.icon {
+  width: 34px;
+}
+h3 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: bold;
+  color: #202123;
+  margin: 16px 0 40px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+}
+input[type="text"] {
+  padding: 12px 16px;
+  border: 1px solid #10a37f;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+::placeholder {
+  color: #8e8ea0;
+  opacity: 1;
+}
+input[type="submit"] {
+  padding: 12px 0;
+  color: #fff;
+  background-color: #10a37f;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+.result {
+  font-weight: normal;
+  margin-top: 0;
+}
+textarea {
+  flex-grow: 1;
+  padding: 12px 16px;
+  border: 1px solid #10a37f;
+  border-radius: 4px;
+  resize: none;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: auto; /* Let it grow */
+}
+.chat-input-container {
+  flex-grow: 1;
+  display: flex;
+}
+.chat-input-wrapper {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  position: relative;  /* Relative positioning for the wrapper */
+}
+.generate-button {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-color: #10a37f;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;  /* Absolute positioning */
+  right: 0;  /* Stick to the right side */
+  bottom: 0;  /* Align with the bottom of textarea */
+}
+.chat-container {
+  max-width: 600px;
+  margin: auto;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.chat-bubble {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-block;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+.user-bubble {
+  background-color: #e0e0e0;
+  align-self: flex-end;
+}
+.bot-bubble {
+  background-color: #0084ff;
+  color: white;
+}
