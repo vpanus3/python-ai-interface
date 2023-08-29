@@ -8,23 +8,51 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
 </head>
 
-<body>
-  <h3>Chat Interface</h3>
-  <div class="chat-input-wrapper">
-    <form action="/fetch_response" method="post" class="chat-input-container">
-      <textarea name="message" placeholder="Send a message" required></textarea>
-      <button type="submit" class="generate-button">&#8594;</button>
-    </form>
-  </div>
-  <div class="chat-container">
-    {% if chat_history %}
-      {% for message in chat_history.messages|reverse %}
-        {% if message.role == 'assistant' %}
-          <div class="chat-bubble bot-bubble">Bot: {{ message.content }}</div>
-        {% elif message.role == 'user' %}
-          <div class="chat-bubble user-bubble">You: {{ message.content }}</div>
+<body class="dark-mode">
+  <div class="flex-container">
+    <div class="left-panel" id="left-panel">
+      <div class="panel-header">
+        <div class="large-rect"></div>
+        <div class="small-square" id="toggle-btn">
+          <i class="icon">&#9664;</i> <!-- This is a placeholder icon -->
+        </div>
+      </div>
+      <!-- Your collapsible panel content here -->
+    </div>
+    <div class="main-content">
+      <h3>Chat Interface</h3>
+      <div class="chat-input-wrapper">
+        <form action="/fetch_response" method="post" class="chat-input-container">
+          <textarea name="message" placeholder="Send a message" required></textarea>
+          <button type="submit" class="generate-button">&#8594;</button>
+        </form>
+      </div>
+      <div class="chat-container">
+        {% if chat_history %}
+          {% for message in chat_history.messages|reverse %}
+            {% if message.role == 'assistant' %}
+              <div class="chat-bubble bot-bubble">Bot: {{ message.content }}</div>
+            {% elif message.role == 'user' %}
+              <div class="chat-bubble user-bubble">You: {{ message.content }}</div>
+            {% endif %}
+          {% endfor %}
         {% endif %}
-      {% endfor %}
-    {% endif %}
+      </div>
+    </div>
   </div>
 </body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const leftPanel = document.getElementById('left-panel');
+    const toggleBtn = document.getElementById('toggle-btn');
+
+    toggleBtn.addEventListener('click', function() {
+      if(leftPanel.classList.contains('collapsed')) {
+        leftPanel.classList.remove('collapsed');
+      } else {
+        leftPanel.classList.add('collapsed');
+      }
+    });
+  });
+</script>
