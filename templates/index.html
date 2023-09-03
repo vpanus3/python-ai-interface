@@ -12,12 +12,18 @@
   <div class="flex-container">
     <div class="left-panel" id="left-panel">
       <div class="panel-header">
-        <div class="large-rect"></div>
-        <div class="small-square" id="toggle-btn">
-          <i class="icon">&#9664;</i> <!-- This is a placeholder icon -->
+        <div class="newchat-button"><div class="newchat-text">+ New Chat</div></div>
+        <div class="sidebar-button" id="toggle-btn">
+          <img src="/static/flaticon-sidebar.png" alt="Bot" class="sidebar-icon">
         </div>
       </div>
-      <!-- Your collapsible panel content here -->
+      <div class="credits-container">
+        Credits
+        <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
+      </div>
+    </div>
     </div>
     <div class="main-content">
       <h3>Chat Interface</h3>
@@ -31,16 +37,16 @@
         {% if chat_history %}
           {% for message in chat_history.messages|reverse %}
             {% if message.role == 'assistant' %}
-              <div class="chat-bubble bot-bubble">Bot: {{ message.content }}</div>
+              <div class="chat-bubble bot-bubble"><img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon"> {{ message.content }}</div>
             {% elif message.role == 'user' %}
-              <div class="chat-bubble user-bubble">You: {{ message.content }}</div>
+              <div class="chat-bubble user-bubble"><img src="/static/flaticon-user.png" alt="Bot" class="chat-icon"> {{ message.content }}</div>
             {% endif %}
           {% endfor %}
         {% endif %}
       </div>
     </div>
-  </div>
 </body>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
