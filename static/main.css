@@ -1,4 +1,3 @@
-
 .flex-container {
   display: flex;
   flex-direction: column;
@@ -35,67 +34,60 @@ body.dark-mode {
   justify-content: space-between; 
 }
 
-.left-panel.collapsed {
-  width: auto; /* Let it take the minimum width required */
-  padding: 10px; /* Already defined in .left-panel */
-}
+  .left-panel.collapsed {
+    width: auto; /* Let it take the minimum width required */
+    padding: 10px; /* Already defined in .left-panel */
+  }
 
-.left-panel.collapsed .newchat-button,
-.left-panel.collapsed .credits-container {
-  display: none;
-}
+  .left-panel.collapsed .newchat-button,
+  .left-panel.collapsed .credits-container {
+    display: none;
+  }
 
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.newchat-button {
-  width: 195px;
-  height: 40px;
-  background-color: #555;
-  border-radius: 8px;
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  cursor: pointer;
-}
+    .newchat-button {
+      width: 195px;
+      height: 40px;
+      background-color: #555;
+      border-radius: 8px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      cursor: pointer;
+    }
 
-.newchat-text {
-  margin-left: 20px;
-}
+      .newchat-text {
+        margin-left: 20px;
+      }
 
-.sidebar-button {
-  width: 40px;
-  height: 40px;
-  background-color: #777;
-  border-radius: 8px;
-  cursor: pointer;
-}
+    .sidebar-button {
+      width: 40px;
+      height: 40px;
+      background-color: #777;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-.sidebar-icon {
-  width: 40px;
-  height: 40px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.icon {
-  font-size: 24px;
-  color: #fff;
-  text-align: center;
-  line-height: 50px;
-}
-
-.credits-container {
-  background-color: #333;
-  color: #fff; 
-  padding: 10px; 
-  width: 80%; 
-  font-size: 10px;
-  color: #ccc;
-}
+      .sidebar-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+      
+  .credits-container {
+    background-color: #333;
+    color: #fff; 
+    padding: 10px; 
+    width: 80%; 
+    font-size: 10px;
+    color: #ccc;
+  }
 
 .main-content {
   margin-left: 250px;
@@ -106,47 +98,49 @@ body.dark-mode {
   align-self: flex-start;
 }
 
-.chat-input-wrapper, .chat-container {
-  box-sizing: border-box; 
-  max-width: 700px;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
+  .chat-input-wrapper, .chat-container {
+    box-sizing: border-box; 
+    max-width: 700px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
 
-.chat-input-wrapper {
-  position: relative;
-}
+  .chat-input-wrapper {
+    position: relative;
+  }
 
-.chat-input-container {
-  position: relative; 
-  width: 100%;  
-}
+    .chat-input-container {
+      position: relative; 
+      width: 97%;  
+    }
 
-.chat-input-container textarea {
-  background-color: #444;
-  color: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  border: none;
-}
+      .chat-input-container textarea {
+        background-color: #444;
+        color: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        padding-right: 5px;
+        border: none;
+        flex-grow: 1; 
+        width: 100%;
+      }
 
-textarea {
-  flex-grow: 1; 
-  margin-right: 10px;  
-  width: 100%;
-  padding-right: 50px; 
-}
+      .generate-button {
+        border-radius: 15px; 
+        font-size: 18px;
+        position: absolute; 
+        right: 0;
+        top: 47%;
+        transform: translateY(-50%);
+      }
 
-.generate-button {
-  border-radius: 8px;  /* Bubble styling */
-  font-size: 18px;  /* Update the arrow icon size */
-  position: absolute;  /* Absolute positioning */
-  right: 0;  /* Stick to the right side */
-  top: 50%;  /* Center vertically */
-  transform: translateY(-50%);  /* Fine-tune the vertical centering */
-  /* Other styles like border-radius and font-size remain unchanged */
-}
+      .generate-icon {
+        width: 23px;
+        height: 23px;
+        padding: 3px;
+        vertical-align: middle;
+      }
 
 .chat-container {
   margin-top: 20px;
@@ -155,26 +149,33 @@ textarea {
   padding: 10px;
 }
 
-.chat-bubble {
-  margin: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  max-width: 100%;
-}
+  .chat-bubble {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+  }
 
-.bot-bubble {
-  background-color: #666;
-  color: #fff;
-}
+    .bot-bubble {
+      background-color: #666;
+      color: #fff;
+    }
 
-.user-bubble {
-  background-color: #444;
-  color: #fff;
-}
+    .user-bubble {
+      background-color: #444;
+      color: #fff;
+      padding-left: 10px;
+    }
 
-.chat-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
+    .chat-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .chat-message {
+      flex-grow: 1;
+    }

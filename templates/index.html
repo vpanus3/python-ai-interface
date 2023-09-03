@@ -22,29 +22,33 @@
         <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/chat" title="chat icons">Chat icons created by srip - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
       </div>
     </div>
+  </div>
+  <div class="main-content">
+    <h3>Chat Interface</h3>
+    <div class="chat-input-wrapper">
+      <form action="/fetch_response" method="post" class="chat-input-container">
+        <textarea name="message" placeholder="Send a message" required></textarea>
+        <button type="submit" class="generate-button"><img src="/static/flaticon-right-arrow.png" alt="Generate" class="generate-icon"></button>
+      </form>
     </div>
-    <div class="main-content">
-      <h3>Chat Interface</h3>
-      <div class="chat-input-wrapper">
-        <form action="/fetch_response" method="post" class="chat-input-container">
-          <textarea name="message" placeholder="Send a message" required></textarea>
-          <button type="submit" class="generate-button">&#8594;</button>
-        </form>
-      </div>
-      <div class="chat-container">
-        {% if chat_history %}
-          {% for message in chat_history.messages|reverse %}
-            {% if message.role == 'assistant' %}
-              <div class="chat-bubble bot-bubble"><img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon"> {{ message.content }}</div>
-            {% elif message.role == 'user' %}
-              <div class="chat-bubble user-bubble"><img src="/static/flaticon-user.png" alt="Bot" class="chat-icon"> {{ message.content }}</div>
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      </div>
+    <div class="chat-container">
+      {% if chat_history %}
+        {% for message in chat_history.messages|reverse %}
+          {% if message.role == 'assistant' %}
+            <div class="chat-bubble bot-bubble"><img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon"><div class="chat-message">{{ message.content }}</div></div>
+          {% elif message.role == 'user' %}
+            <div class="chat-bubble user-bubble"><img src="/static/flaticon-user.png" alt="Bot" class="chat-icon"><div class="chat-message">{{ message.content }}</div></div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     </div>
+  </div>
 </body>
 
 
