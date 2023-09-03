@@ -43,7 +43,8 @@ body.dark-mode {
 
   .left-panel.collapsed .newchat-button,
   .left-panel.collapsed .credits-button,
-  .left-panel.collapsed .credits-container {
+  .left-panel.collapsed .credits-container,
+  .left-panel.collapsed .conversation-item {
     display: none;
   }
 
@@ -149,6 +150,11 @@ body.dark-mode {
           width: 25px;
           height: 25px;
           border-radius: 8px;
+          transition: background-color 0.3s ease;
+        }
+
+        .conversation-button:hover {
+          background-color: #989898;
         }
         
           .conversation-button img {
