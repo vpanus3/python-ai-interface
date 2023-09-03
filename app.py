@@ -3,6 +3,7 @@ import os
 import openai
 from flask import Flask, redirect, render_template, request, url_for, session
 from models.openai import ChatMessage, ChatCompletionRequest, ChatHistory, ChatRole, ChatCompletionResponse, ChatHistoryMessage
+from services.cosmosdb import CosmosClientWrapper
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - multiple conversations, export chat history
@@ -12,8 +13,13 @@ app.secret_key = "f9b0216e-f1e7-4914-8652-0fbcfc0972b7"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 temperature = float(os.getenv("OPENAI_Temperature"))
 
+# Default User Id - Authentication will be implemented later
+user_id = "48f9f0e7-3312-425b-8281-4f72ab9a1419"
+
 @app.route("/", methods=["GET"])
 def index():
+    wrapper = CosmosClientWrapper()
+    wrapper.test()
     chat_history = session.get("chat_history")
     return render_template("index.html", chat_history=chat_history)
 
