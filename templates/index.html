@@ -17,8 +17,10 @@
           <img src="/static/flaticon-sidebar.png" alt="Bot" class="sidebar-icon">
         </div>
       </div>
-      <div class="credits-container">
-        Credits
+      <button id="show-credits-btn" class="credits-button">Credits</button>
+      <div id="credits-overlay" class="credits-overlay"></div>
+      <div id="credits-container" class="credits-container">
+        <h2>Credits</h2>
         <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
@@ -54,15 +56,47 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    setupSidebar();
+    setupCreditsButton();
+  });
+
+  function setupSidebar() {
     const leftPanel = document.getElementById('left-panel');
     const toggleBtn = document.getElementById('toggle-btn');
-
     toggleBtn.addEventListener('click', function() {
       if(leftPanel.classList.contains('collapsed')) {
         leftPanel.classList.remove('collapsed');
       } else {
         leftPanel.classList.add('collapsed');
+        hideCredits();
       }
     });
-  });
+  }
+
+  function setupCreditsButton() {
+    const creditsBtn = document.getElementById('show-credits-btn');
+    const creditsContainer = document.getElementById('credits-container');
+    const overlay = document.getElementById('overlay');
+
+    creditsBtn.addEventListener("click", function() {
+      if (creditsContainer.style.display === "none" || !creditsContainer.style.display) {
+        creditsContainer.style.display = "block";
+        overlay.style.display = "block";
+      } else {
+        hideCredits();
+      }
+    });
+
+    overlay.addEventListener("click", function() {
+      creditsContainer.style.display = "none";
+      overlay.style.display = "none";
+    });
+  }
+
+  function hideCredits() {
+    const creditsContainer = document.getElementById('credits-container');
+    const overlay = document.getElementById('overlay');
+    creditsContainer.style.display = "none";
+    overlay.style.display = "none";
+  }
 </script>
