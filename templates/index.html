@@ -61,9 +61,21 @@
       {% if chat_history %}
         {% for message in chat_history.messages|reverse %}
           {% if message.role == 'assistant' %}
-            <div class="chat-bubble bot-bubble"><img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon"><div class="chat-message">{{ message.content }}</div></div>
+            <div class="chat-bubble bot-bubble">
+              <img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon">
+              <div class="chat-message">{{ message.content }}</div>
+              <button class="copy-button">
+                <img src="/static/flaticon-duplicate.png" alt="Copy">
+              </button>
+            </div>
           {% elif message.role == 'user' %}
-            <div class="chat-bubble user-bubble"><img src="/static/flaticon-user.png" alt="Bot" class="chat-icon"><div class="chat-message">{{ message.content }}</div></div>
+            <div class="chat-bubble user-bubble">
+              <img src="/static/flaticon-user.png" alt="user" class="chat-icon">
+              <div class="chat-message">{{ message.content }}</div>
+              <button class="copy-button">
+                <img src="/static/flaticon-duplicate.png" alt="Copy">
+              </button>
+            </div>
           {% endif %}
         {% endfor %}
       {% endif %}
