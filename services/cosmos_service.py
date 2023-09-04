@@ -20,21 +20,6 @@ class CosmosService:
         self.database = self.client.get_database_client(DATABASE_NAME)
         self.conversations_container = self.database.get_container_client(CONVERSATIONS_CONTAINTER)
 
-    def test(self):
-
-        new_item = {
-            "id": "70b63682-b93a-4c77-aad2-65501347265f",
-            "user_id": "48f9f0e7-3312-425b-8281-4f72ab9a1419",
-        }
-        self.conversations_container.create_item(new_item)
-
-        existing_item = self.container.read_item(
-            item="70b63682-b93a-4c77-aad2-65501347265f",
-            partition_key="48f9f0e7-3312-425b-8281-4f72ab9a1419"
-        )
-
-        return existing_item
-
     def get_user_conversations(self, user_id: str) -> List[UserConversation]:
         user_conversations = []
         query = f"SELECT c.id as conversation_id, c.user_id, c.title FROM c WHERE c.user_id = '{user_id}'"

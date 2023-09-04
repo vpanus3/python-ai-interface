@@ -26,7 +26,9 @@ class OpenAIService:
 
     def update_converation(self, user_id: str, chat_message: ChatMessage, conversation: Conversation, chat_completion_response: ChatCompletionResponse) -> Conversation:
         conversation = conversation or Conversation()
-        conversation.user_id = user_id
+        conversation.user_id = conversation.user_id if conversation.user_id else user_id
+        conversation.title = conversation.title if conversation.title else self.get_conversation_title(chat_message.content)
+
         converation_message_request = ConversationMessage(
             chat_message.content,
             chat_message.role,
@@ -64,3 +66,21 @@ class OpenAIService:
             conversation=conversation,
             chat_completion_response= chat_completion_response)
         return conversation
+    
+    def get_conversation_title(self, user_message: str) -> str:
+        prompt = (
+            "Generate a title for the message of a conversation that is less than 25 characters long.\n"
+            "\n"
+            "Message: Tell me a robot joke.\n"
+            "Title: Robot Joke\n"
+            "Message: I want you to tell me how to be the best programmer ever!\n"
+            "Title: Programming Tips\n"
+            "Message: {}\n"
+            "Title:"
+        ).format(user_message)
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            temperature=0.6,
+        )
+        return response.choices[0].text

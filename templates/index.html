@@ -3,7 +3,7 @@
   <title>Python AI</title>
   <link
     rel="shortcut icon"
-    href="{{ url_for('static', filename='dog.png') }}"
+    href="{{ url_for('static', filename='flaticon-brain.png') }}"
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
 </head>
@@ -18,22 +18,18 @@
         </div>
       </div>
       <ol class="conversation-list">
-        <li class="conversation-item">
-          <img src="/static/flaticon-message.png" alt="Conversation" class="conversation-icon">
-          <div class="conversation-text">Title</div>
-          <div class="conversation-commands">
-            <button class="conversation-button"><img src="/static/flaticon-edit.png" alt="Edit" class="conversation-icon"></button>
-            <button class="conversation-button"><img src="/static/flaticon-delete.png" alt="Delete" class="conversation-icon"></button>
-          </div>
-        </li>
-        <li class="conversation-item">
-          <img src="/static/flaticon-message.png" alt="Conversation" class="conversation-icon">
-          <div class="conversation-text">Title</div>
-          <div class="conversation-commands">
-            <button class="conversation-button"><img src="/static/flaticon-edit.png" alt="Edit" class="conversation-icon"></button>
-            <button class="conversation-button"><img src="/static/flaticon-delete.png" alt="Delete" class="conversation-icon"></button>
-          </div>
-        </li>
+        {% if user_session and user_session.user_conversations %}
+          {% for user_conversation in user_session.user_conversations %}
+            <li class="conversation-item">
+              <img src="/static/flaticon-message.png" alt="Conversation" class="conversation-icon">
+              <div class="conversation-text">{{ user_conversation.title }}</div>
+              <div class="conversation-commands">
+                <button class="conversation-button"><img src="/static/flaticon-edit.png" alt="Edit" class="conversation-icon"></button>
+                <button class="conversation-button"><img src="/static/flaticon-delete.png" alt="Delete" class="conversation-icon"></button>
+              </div>
+            </li>
+          {% endfor %}
+        {% endif %}
       </ol>
       <button id="show-credits-btn" class="credits-button">Credits</button>
       <div id="credits-overlay" class="credits-overlay"></div>

@@ -55,6 +55,7 @@ class ConversationMessage:
 class Conversation:
     id: str = field(default=str(uuid.uuid4()))
     user_id: str = field(default=None)
+    title: str = field(default='')
     messages: List[ConversationMessage] = field(default_factory=list)
 
     def get_chat_messages(self) -> List[ChatMessage]:
@@ -67,6 +68,7 @@ class Conversation:
         return {
             'id': self.id,
             'user_id': self.user_id,
+            'title': self.title,
             'messages': [message.to_dict() for message in self.messages]
         }
 
@@ -93,11 +95,13 @@ class Conversation:
 class UserConversation:
     conversation_id: str = field(default=None)
     user_id: str = field(default=None)
+    title: str = field(default=None)
 
     def to_dict(self):
         return {
             'conversation_id': self.conversation_id,
             'user_id': self.user_id,
+            'title': self.title
         }
 
     def to_json(self):
@@ -107,7 +111,8 @@ class UserConversation:
     def from_dict(cls, data_dict: dict):
         return cls(
             conversation_id=data_dict.get('conversation_id', ''),
-            user_id=data_dict.get('user_id', '')
+            user_id=data_dict.get('user_id', ''),
+            title=data_dict.get('title', '')
         )
 
     @classmethod
