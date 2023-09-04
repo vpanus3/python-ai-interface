@@ -58,8 +58,8 @@
       </form>
     </div>
     <div class="chat-container">
-      {% if chat_history %}
-        {% for message in chat_history.messages|reverse %}
+      {% if user_session and user_session.conversation %}
+        {% for message in user_session.conversation.messages|reverse %}
           {% if message.role == 'assistant' %}
             <div class="chat-bubble bot-bubble">
               <img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon">

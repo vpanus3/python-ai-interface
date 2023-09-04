@@ -1,6 +1,7 @@
 # conversation.py
 
 import json
+import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Dict
@@ -52,7 +53,7 @@ class ConversationMessage:
 
 @dataclass
 class Conversation:
-    id: str = field(default=None)
+    id: str = field(default=str(uuid.uuid4()))
     user_id: str = field(default=None)
     messages: List[ConversationMessage] = field(default_factory=list)
 
@@ -64,6 +65,8 @@ class Conversation:
 
     def to_dict(self) -> Dict:
         return {
+            'id': self.id,
+            'user_id': self.user_id,
             'messages': [message.to_dict() for message in self.messages]
         }
 
@@ -78,17 +81,17 @@ class Conversation:
     @classmethod
     def from_dict(cls, conversation_dict: Dict):
         messages = []
-        message_dicts = conversation_dict.get('messages', [])
-        
-        for message_dict in message_dicts:
-            message = ConversationMessage.from_dict(message_dict)  # Assuming you have a `from_dict` in ConversationMessage
-            messages.append(message)
-
+        if conversation_dict is not None:
+            message_dicts = conversation_dict.get('messages', [])
+            if message_dicts is not None and len(message_dicts) > 0:
+                for message_dict in message_dicts:
+                    message = ConversationMessage.from_dict(message_dict)
+                    messages.append(message)
         return cls(messages=messages)
 
 @dataclass
 class UserConversation:
-    conversaton_id: str = field(default=None)
+    conversation_id: str = field(default=None)
     user_id: str = field(default=None)
 
     def to_dict(self):

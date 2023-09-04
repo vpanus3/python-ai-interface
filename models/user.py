@@ -16,7 +16,7 @@ class UserSession:
         return {
             'user_id': self.user_id,
             'user_conversations': [user_conversation.to_dict() for user_conversation in self.user_conversations],
-            'conversation': self.conversation.to_dict()
+            'conversation': self.conversation.to_dict() if self.conversation is not None else None
         }
 
     def to_json(self):
