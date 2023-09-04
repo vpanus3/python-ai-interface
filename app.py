@@ -2,8 +2,7 @@ import os
 
 import openai
 from flask import Flask, redirect, render_template, request, url_for, session
-from models.openai_models import ChatMessage, ChatCompletionRequest, ChatRole, ChatCompletionResponse
-from models.conversation import Conversation, ConversationMessage
+from models.conversation import Conversation
 from services.cosmosdb import CosmosClientWrapper
 from services.openai_service import OpenAIService
 
@@ -19,23 +18,23 @@ user_id = "48f9f0e7-3312-425b-8281-4f72ab9a1419"
 
 @app.route("/", methods=["GET"])
 def index():
-    converation = session.get("chat_history")
-    return render_template("index.html", chat_history=converation)
+    conversation_dict = session.get("conversation", None)
+    return render_template("index.html", chat_history=conversation_dict)
 
 @app.route("/fetch_response", methods=["POST"])
 def fetch_response():
     conversation = get_conversation()
     user_message = request.form["message"]
     conversation = openai_service.send_user_message(user_message, conversation)    
-    session['chat_history'] = conversation.to_dict()
+    session['conversation'] = conversation.to_dict()
     return redirect(url_for("index"))
 
 def get_conversation() -> Conversation:
-    converation_dict = session.get("chat_history")
-    converation = Conversation()
-    if (converation_dict is not None):
-        converation = Conversation.from_dict(converation_dict)
-    return converation
+    conversation_dict = session.get("conversation")
+    conversation = Conversation()
+    if conversation_dict is not None:
+        conversation = Conversation.from_dict(conversation_dict)
+    return conversation
 
 def generate_prompt(message):
     return """ """.format(
