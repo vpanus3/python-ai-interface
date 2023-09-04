@@ -141,3 +141,4 @@ class ChatHistory:
             chat_history_message = ChatHistoryMessage.from_dict(message)
             messages.append(chat_history_message)        
         return cls(messages=messages)
+    
