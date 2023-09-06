@@ -38,6 +38,14 @@ def fetch_response():
     cosmos_service.save_conversation(user_session.conversation)
     return redirect(url_for("index"))
 
+@app.route("/create_new_conversation", methods=["POST"])
+def create_new_conversation():
+    user_session = get_user_session()
+    user_session.conversation = None
+
+    set_user_session(user_session)
+    return redirect(url_for("index"))
+
 def set_user_session(user_session: UserSession):
     session['user_session'] = user_session.to_dict()
 
