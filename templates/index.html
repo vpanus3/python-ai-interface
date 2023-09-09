@@ -77,9 +77,10 @@
       {% endif %}
     </div>
   </div>
+  <div id="app"></div>
 </body>
 
-
+<script src="{{ url_for('static', filename='dist/bundle.js') }}" defer></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     setupSidebar();
@@ -102,7 +103,7 @@
   function setupCreditsButton() {
     const creditsBtn = document.getElementById('show-credits-btn');
     const creditsContainer = document.getElementById('credits-container');
-    const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('credits-overlay');
 
     creditsBtn.addEventListener("click", function() {
       if (creditsContainer.style.display === "none" || !creditsContainer.style.display) {
@@ -121,7 +122,7 @@
 
   function hideCredits() {
     const creditsContainer = document.getElementById('credits-container');
-    const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('credits-overlay');
     creditsContainer.style.display = "none";
     overlay.style.display = "none";
   }

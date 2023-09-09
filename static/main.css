@@ -169,7 +169,7 @@ body.dark-mode {
     background-color: #444;
     color: #fff;
     padding: 5px;
-    width: 240px;
+    width: 245px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -198,11 +198,11 @@ body.dark-mode {
       transform: translate(-50%, -50%);
       z-index: 2;
       padding: 20px;
-      width: 300px;
+      width: 350px;
       border-radius: 8px;
       background-color: #595968;
       color: #ccc;
-      font-size: 10px;
+      font-size: 14px;
       border: 2px solid #757575; /* Inner border */
       box-shadow: 0 0 0 4px #595968, /* Middle space, same color as background */
                   0 0 0 6px #8f8f8f; /* Outer border */
@@ -274,7 +274,7 @@ body.dark-mode {
     border-radius: 8px;
     max-width: 100%;
     display: flex;
-    align-items: center;
+    align-items: start;
     font-size: 16px;
   }
 
