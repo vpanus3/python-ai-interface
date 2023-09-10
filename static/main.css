@@ -1,4 +1,3 @@
-/* Custom styles */
 body.bg-dark {
   background-color: #000;
   color: #fff;
@@ -8,10 +7,9 @@ body.bg-dark {
 
 .left-panel {
   width: 300px !important;
-  max-height: 100vh; /* should take full height */
   display: flex;
-  flex-direction: column; /* stack children vertically */
-  overflow-y: auto; /* scroll if content overflows */
+  flex-direction: column;
+  overflow-y: auto;
 }
 
   .left-panel .left-panel-controls {
@@ -38,17 +36,26 @@ body.bg-dark {
       margin-right: 10px;
     }
 
-  .list-group-item.bg-secondary {
-    background-color: #666;
-    border: 1px solid #777;
-    border-radius: 8px;
-    color: #fff;
-    transition: background-color 0.3s ease;
+  .conversation-item {
+    margin-bottom: 10px;
+    font-size: 12px;
   }
 
-    .list-group-item.bg-secondary:hover {
-      background-color: #555;
+    .list-group-item.bg-secondary {
+      background-color: #666;
+      border: 1px solid #777;
+      border-radius: 8px;
+      color: #fff;
+      transition: background-color 0.3s ease;
     }
+
+      .list-group-item.bg-secondary:hover {
+        background-color: #555;
+      }
+
+  .credits-button-container {
+    padding-bottom: 10px;
+  }
 
   .credits-overlay {
     display: none;
@@ -80,6 +87,7 @@ body.bg-dark {
 
 .chat-panel {
   min-width: 600px;
+  min-height: 100vh;
 }
 
   .form-control {
@@ -100,9 +108,12 @@ body.bg-dark {
       }
 
   .chat-box {
-    max-height: 80vh;
     overflow-y: auto;
     border: 1px solid #555;
     border-radius: 8px;
   }
+
+    .chat-message {
+      margin-top: 10px;
+    }
 

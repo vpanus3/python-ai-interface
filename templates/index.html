@@ -24,7 +24,7 @@
           <ol class="list-group">
             {% if user_session and user_session.user_conversations %}
               {% for user_conversation in user_session.user_conversations %}
-              <li class="list-group-item bg-secondary text-light d-flex align-items-center justify-content-between">
+              <li class="list-group-item bg-secondary text-light d-flex align-items-center justify-content-between conversation-item">
                 <div class="d-flex align-items-center">
                   <img src="/static/flaticon-message.png" alt="Conversation" class="img-fluid me-2">
                   <div>{{ user_conversation.title }}</div>
@@ -38,7 +38,7 @@
             {% endif %}
           </ol>
         </div>
-        <div class="mt-auto">
+        <div class="mt-auto credits-button-container">
           <button id="show-credits-btn" class="btn btn-secondary mt-3">Credits</button>
         </div>
         <div id="credits-overlay" class="credits-overlay"></div>
@@ -68,12 +68,12 @@
             {% if user_session and user_session.conversation %}
               {% for message in user_session.conversation.messages|reverse %}
                 {% if message.role == 'assistant' %}
-                  <div class="alert alert-secondary">
+                  <div class="alert alert-secondary chat-message">
                     <img src="/static/flaticon-brain.png" alt="Bot" class="img-fluid">
                     <span>{{ message.content }}</span>
                   </div>
                 {% elif message.role == 'user' %}
-                  <div class="alert alert-dark">
+                  <div class="alert alert-dark chat-message">
                     <img src="/static/flaticon-user.png" alt="User" class="img-fluid">
                     <span>{{ message.content }}</span>
                   </div>
