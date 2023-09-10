@@ -88,6 +88,8 @@ body.bg-dark {
 .chat-panel {
   min-width: 600px;
   min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
   .form-control {
