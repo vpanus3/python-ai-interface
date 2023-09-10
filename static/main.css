@@ -14,12 +14,17 @@ body.bg-dark {
   overflow-y: auto; /* scroll if content overflows */
 }
 
+  .left-panel .left-panel-controls {
+      padding-left: 0px;
+  }
+
   .btn-secondary {
     background-color: #555;
     border: 1px solid #777;
     border-radius: 8px;
     color: #fff;
     transition: background-color 0.3s ease;
+    padding: 0px;
   }
 
     .btn-secondary:hover {
