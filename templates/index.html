@@ -10,31 +10,34 @@
 
 <body class="bg-dark">
   <div class="container-fluid">
-    <div class="row p-2">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <button class="btn btn-secondary">+ New Conversation</button>
-        <h3 class="text-light">Chat Interface</h3>
-        <button class="btn btn-secondary" id="toggle-btn">
-          <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="img-fluid">
-        </button>
-      </div>
-    </div>
     <div class="row">
-      <div class="col-md-2 p-2 d-flex flex-column" id="left-panel">
-        <ol class="list-group">
-          {% if user_session and user_session.user_conversations %}
-            {% for user_conversation in user_session.user_conversations %}
-              <li class="list-group-item bg-secondary text-light">
-                <img src="/static/flaticon-message.png" alt="Conversation" class="img-fluid">
-                <div class="d-inline-block">{{ user_conversation.title }}</div>
-                <div class="float-end">
+      <div class="col-2 d-flex flex-column left-panel" id="left-panel">
+        <div class="row p-2">
+          <div class="col d-flex align-items-center">
+            <button class="btn btn-secondary flex-grow-1">+ New Conversation</button>
+            <button class="btn btn-secondary ms-2" id="toggle-btn">
+              <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="img-fluid">
+            </button>
+          </div>
+        </div>
+        <div class="row p-2">
+          <ol class="list-group">
+            {% if user_session and user_session.user_conversations %}
+              {% for user_conversation in user_session.user_conversations %}
+              <li class="list-group-item bg-secondary text-light d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <img src="/static/flaticon-message.png" alt="Conversation" class="img-fluid me-2">
+                  <div>{{ user_conversation.title }}</div>
+                </div>
+                <div class="d-flex align-items-center">
                   <button class="btn btn-secondary btn-sm"><img src="/static/flaticon-edit.png" alt="Edit" class="img-fluid"></button>
-                  <button class="btn btn-secondary btn-sm"><img src="/static/flaticon-delete.png" alt="Delete" class="img-fluid"></button>
+                  <button class="btn btn-secondary btn-sm ms-1"><img src="/static/flaticon-delete.png" alt="Delete" class="img-fluid"></button>
                 </div>
               </li>
-            {% endfor %}
-          {% endif %}
-        </ol>
+              {% endfor %}
+            {% endif %}
+          </ol>
+        </div>
         <div class="mt-auto">
           <button id="show-credits-btn" class="btn btn-secondary mt-3">Credits</button>
         </div>
@@ -50,29 +53,34 @@
           <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
         </div>
       </div>
-      <div class="col-md-5 p-2">
-        <div class="input-group mb-3">
-          <form action="/fetch_response" method="post" class="w-100">
-            <textarea name="message" class="form-control" placeholder="Send a message" required></textarea>
-            <button type="submit" class="btn btn-primary"><img src="/static/flaticon-right-arrow.png" alt="Generate" class="img-fluid"></button>
-          </form>
+      <div class="col-5 chat-panel">
+        <div class="row p-2">
+          <h4 class="text-light">Chat Interface</h3>
         </div>
-        <div class="chat-box text-light rounded">
-          {% if user_session and user_session.conversation %}
-            {% for message in user_session.conversation.messages|reverse %}
-              {% if message.role == 'assistant' %}
-                <div class="alert alert-secondary">
-                  <img src="/static/flaticon-brain.png" alt="Bot" class="img-fluid">
-                  <span>{{ message.content }}</span>
-                </div>
-              {% elif message.role == 'user' %}
-                <div class="alert alert-dark">
-                  <img src="/static/flaticon-user.png" alt="User" class="img-fluid">
-                  <span>{{ message.content }}</span>
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+        <div class="row p-2">
+          <div class="input-group mb-3">
+            <form action="/fetch_response" method="post" class="w-100">
+              <textarea name="message" class="form-control" placeholder="Send a message" required></textarea>
+              <button type="submit" class="btn btn-chat-generate"><img src="/static/flaticon-right-arrow.png" alt="Generate" class="img-fluid"></button>
+            </form>
+          </div>
+          <div class="chat-box text-light rounded">
+            {% if user_session and user_session.conversation %}
+              {% for message in user_session.conversation.messages|reverse %}
+                {% if message.role == 'assistant' %}
+                  <div class="alert alert-secondary">
+                    <img src="/static/flaticon-brain.png" alt="Bot" class="img-fluid">
+                    <span>{{ message.content }}</span>
+                  </div>
+                {% elif message.role == 'user' %}
+                  <div class="alert alert-dark">
+                    <img src="/static/flaticon-user.png" alt="User" class="img-fluid">
+                    <span>{{ message.content }}</span>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
