@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
-// import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 const App = () => {
   return (
     <div className="container">
-      <h1>Hello World</h1>
+      {/* <h1>Hello World</h1> */}
     </div>
   );
 };

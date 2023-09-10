@@ -8,73 +8,73 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
 </head>
 
-<body class="dark-mode">
-  <div class="flex-container">
-    <div class="left-panel" id="left-panel">
-      <div class="panel-header">
-        <div class="newchat-button"><div class="newchat-text">+ New Conversation</div></div>
-        <div class="sidebar-button" id="toggle-btn">
-          <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="sidebar-icon">
+<body class="bg-dark">
+  <div class="container-fluid">
+    <div class="row p-2">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-secondary">+ New Conversation</button>
+        <h3 class="text-light">Chat Interface</h3>
+        <button class="btn btn-secondary" id="toggle-btn">
+          <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="img-fluid">
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2 p-2 d-flex flex-column" id="left-panel">
+        <ol class="list-group">
+          {% if user_session and user_session.user_conversations %}
+            {% for user_conversation in user_session.user_conversations %}
+              <li class="list-group-item bg-secondary text-light">
+                <img src="/static/flaticon-message.png" alt="Conversation" class="img-fluid">
+                <div class="d-inline-block">{{ user_conversation.title }}</div>
+                <div class="float-end">
+                  <button class="btn btn-secondary btn-sm"><img src="/static/flaticon-edit.png" alt="Edit" class="img-fluid"></button>
+                  <button class="btn btn-secondary btn-sm"><img src="/static/flaticon-delete.png" alt="Delete" class="img-fluid"></button>
+                </div>
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ol>
+        <div class="mt-auto">
+          <button id="show-credits-btn" class="btn btn-secondary mt-3">Credits</button>
+        </div>
+        <div id="credits-overlay" class="credits-overlay"></div>
+        <div id="credits-container" class="credits-container">
+          <h2>Credits</h2>
+          <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
+          <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
         </div>
       </div>
-      <ol class="conversation-list">
-        {% if user_session and user_session.user_conversations %}
-          {% for user_conversation in user_session.user_conversations %}
-            <li class="conversation-item">
-              <img src="/static/flaticon-message.png" alt="Conversation" class="conversation-icon">
-              <div class="conversation-text">{{ user_conversation.title }}</div>
-              <div class="conversation-commands">
-                <button class="conversation-button"><img src="/static/flaticon-edit.png" alt="Edit" class="conversation-icon"></button>
-                <button class="conversation-button"><img src="/static/flaticon-delete.png" alt="Delete" class="conversation-icon"></button>
-              </div>
-            </li>
-          {% endfor %}
-        {% endif %}
-      </ol>
-      <button id="show-credits-btn" class="credits-button">Credits</button>
-      <div id="credits-overlay" class="credits-overlay"></div>
-      <div id="credits-container" class="credits-container">
-        <h2>Credits</h2>
-        <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
-        <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
-      </div>
-    </div>
-  </div>
-  <div class="main-content">
-    <h3>Chat Interface</h3>
-    <div class="chat-input-wrapper">
-      <form action="/fetch_response" method="post" class="chat-input-container">
-        <textarea name="message" placeholder="Send a message" required></textarea>
-        <button type="submit" class="generate-button"><img src="/static/flaticon-right-arrow.png" alt="Generate" class="generate-icon"></button>
-      </form>
-    </div>
-    <div class="chat-container">
-      {% if user_session and user_session.conversation %}
-        {% for message in user_session.conversation.messages|reverse %}
-          {% if message.role == 'assistant' %}
-            <div class="chat-bubble bot-bubble">
-              <img src="/static/flaticon-brain.png" alt="Bot" class="chat-icon">
-              <div class="chat-message">{{ message.content }}</div>
-              <button class="copy-button">
-                <img src="/static/flaticon-duplicate.png" alt="Copy">
-              </button>
-            </div>
-          {% elif message.role == 'user' %}
-            <div class="chat-bubble user-bubble">
-              <img src="/static/flaticon-user.png" alt="user" class="chat-icon">
-              <div class="chat-message">{{ message.content }}</div>
-              <button class="copy-button">
-                <img src="/static/flaticon-duplicate.png" alt="Copy">
-              </button>
-            </div>
+      <div class="col-md-5 p-2">
+        <div class="input-group mb-3">
+          <form action="/fetch_response" method="post" class="w-100">
+            <textarea name="message" class="form-control" placeholder="Send a message" required></textarea>
+            <button type="submit" class="btn btn-primary"><img src="/static/flaticon-right-arrow.png" alt="Generate" class="img-fluid"></button>
+          </form>
+        </div>
+        <div class="chat-box text-light rounded">
+          {% if user_session and user_session.conversation %}
+            {% for message in user_session.conversation.messages|reverse %}
+              {% if message.role == 'assistant' %}
+                <div class="alert alert-secondary">
+                  <img src="/static/flaticon-brain.png" alt="Bot" class="img-fluid">
+                  <span>{{ message.content }}</span>
+                </div>
+              {% elif message.role == 'user' %}
+                <div class="alert alert-dark">
+                  <img src="/static/flaticon-user.png" alt="User" class="img-fluid">
+                  <span>{{ message.content }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
           {% endif %}
-        {% endfor %}
-      {% endif %}
+        </div>
+      </div>
     </div>
   </div>
   <div id="app"></div>
