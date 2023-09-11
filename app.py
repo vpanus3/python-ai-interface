@@ -60,7 +60,7 @@ def get_user_session() -> UserSession:
         user_conversations = cosmos_service.get_user_conversations(user_session.user_id)
         if (user_conversations and len(user_conversations) > 0):
             user_session.user_conversations = user_conversations
-            user_conversation = user_conversations[0]
+            user_conversation = user_conversations[0]  #TODO - save last conversation
             conversation = cosmos_service.get_conversation(
                 user_id=user_conversation.user_id,
                 conversation_id=user_conversation.conversation_id

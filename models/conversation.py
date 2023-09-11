@@ -89,7 +89,12 @@ class Conversation:
                 for message_dict in message_dicts:
                     message = ConversationMessage.from_dict(message_dict)
                     messages.append(message)
-        return cls(messages=messages)
+        return cls(
+            id = conversation_dict.get('id', ''),
+            user_id = conversation_dict.get('user_id', ''),
+            title = conversation_dict.get('title', ''),
+            messages = messages
+        )
 
 @dataclass
 class UserConversation:
@@ -108,14 +113,14 @@ class UserConversation:
         return json.dumps(self.to_dict())
 
     @classmethod
+    def from_json(cls, json_str: str):
+        data_dict = json.loads(json_str)
+        return cls.from_dict(data_dict)
+
+    @classmethod
     def from_dict(cls, data_dict: dict):
         return cls(
             conversation_id=data_dict.get('conversation_id', ''),
             user_id=data_dict.get('user_id', ''),
             title=data_dict.get('title', '')
         )
-
-    @classmethod
-    def from_json(cls, json_str: str):
-        data_dict = json.loads(json_str)
-        return cls.from_dict(data_dict)
