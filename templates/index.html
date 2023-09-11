@@ -58,7 +58,7 @@
           <h4 class="text-light">Chat Interface</h3>
         </div>
         <div class="row p-2">
-          <div class="input-group mb-3">
+          <div class="input-group mb-3 chat-form-container">
             <form action="/fetch_response" method="post" class="w-100 chat-form">
               <textarea name="message" class="chat-textarea" id="chat-textarea" placeholder="Send a message" required></textarea>
               <button type="submit" class="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
@@ -66,7 +66,7 @@
               </button>
             </form>
           </div>
-          <div class="chat-box text-light rounded">
+          <div class="chat-responses-container text-light rounded">
             {% if user_session and user_session.conversation %}
               {% for message in user_session.conversation.messages|reverse %}
                 {% if message.role == 'assistant' %}

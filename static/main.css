@@ -87,10 +87,14 @@ body.bg-dark {
 
 .chat-panel {
   min-width: 600px;
-  min-height: 100vh;
-  max-height: 100vh;
-  overflow-y: auto;
 }
+
+  .chat-form-container {
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+  }
 
   .chat-form {
     position: relative;
@@ -127,10 +131,11 @@ body.bg-dark {
           vertical-align: middle;
         }
 
-  .chat-box {
-    overflow-y: auto;
+  .chat-responses-container {
     border: 1px solid #555;
     border-radius: 8px;
+    max-height: 78vh;
+    overflow-y: auto;
   }
 
     .chat-message {
