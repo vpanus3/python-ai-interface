@@ -9,13 +9,13 @@
 </head>
 
 <body class="bg-dark">
-  <div class="container-fluid">
+  <div class="container-fluid app-container">
     <div class="row">
       <div class="col-2 d-flex flex-column left-panel" id="left-panel">
         <div class="row p-2">
           <div class="col d-flex left-panel-controls">
             <button class="btn btn-secondary flex-grow-1">+ New Conversation</button>
-            <button class="btn btn-secondary ms-2" id="toggle-btn">
+            <button class="btn btn-secondary ms-2 left-panel-button left-panel-button-close" id="left-panel-button-close">
               <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="img-fluid">
             </button>
           </div>
@@ -53,14 +53,17 @@
           <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
         </div>
       </div>
-      <div class="col-5 chat-panel">
-        <div class="row p-2">
-          <h4 class="text-light">Chat Interface</h3>
+      <div class="col-5 mx-auto chat-panel">
+        <div class="row p-2 app-header" id="app-header">
+          <h4 class="text-light">Python AI Interface</h3>
+          <button class="btn btn-secondary ms-2 left-panel-button left-panel-button-open" id="left-panel-button-open">
+            <img src="/static/flaticon-sidebar.png" alt="Sidebar" class="img-fluid">
+          </button>
         </div>
         <div class="row p-2">
           <div class="input-group mb-3 chat-form-container">
             <form action="/fetch_response" method="post" class="w-100 chat-form">
-              <textarea name="message" class="chat-textarea" id="chat-textarea" placeholder="Send a message" required></textarea>
+              <textarea name="message" class="chat-textarea" placeholder="Send a message" required></textarea>
               <button type="submit" class="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                 <img src="/static/flaticon-right-arrow.png" alt="Send Message" class="img-fluid">
               </button>
@@ -95,27 +98,30 @@
   document.addEventListener("DOMContentLoaded", function() {
     setupSidebar();
     setupCreditsButton();
-
-    const textarea = document.querySelector('textarea');
-
-  textarea.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      return event.preventDefault();
-    }
-  });
   });
 
   function setupSidebar() {
     const leftPanel = document.getElementById('left-panel');
-    const toggleBtn = document.getElementById('toggle-btn');
-    toggleBtn.addEventListener('click', function() {
-      if(leftPanel.classList.contains('collapsed')) {
-        leftPanel.classList.remove('collapsed');
-      } else {
-        leftPanel.classList.add('collapsed');
-        hideCredits();
-      }
-    });
+    const appHeader = document.getElementById('app-header');
+    const leftPanelButton = document.getElementById('left-panel-button-close');
+    const leftPanelButtonOpen = document.getElementById('left-panel-button-open');
+    var buttons = [];
+    buttons.push(leftPanelButton);
+    buttons.push(leftPanelButtonOpen);
+    for(i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function() {
+        if(leftPanel.classList.contains('panel-collapsed')) {
+          leftPanel.classList.remove('panel-collapsed');
+        } else {
+          leftPanel.classList.add('panel-collapsed');
+        }
+        if(appHeader.classList.contains('panel-collapsed')) {
+          appHeader.classList.remove('panel-collapsed');
+        } else {
+          appHeader.classList.add('panel-collapsed');
+        }
+      });
+    }
   }
 
   function setupCreditsButton() {
@@ -138,10 +144,4 @@
     });
   }
 
-  function hideCredits() {
-    const creditsContainer = document.getElementById('credits-container');
-    const overlay = document.getElementById('credits-overlay');
-    creditsContainer.style.display = "none";
-    overlay.style.display = "none";
-  }
 </script>

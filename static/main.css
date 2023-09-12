@@ -5,36 +5,54 @@ body.bg-dark {
   margin: 0;
 }
 
+.app-container {
+  padding-top: 10px;
+}
+
 .left-panel {
   width: 300px !important;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  position: relative;
+  border: 1px solid #555;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding-right: 0px !important;
 }
 
-  .left-panel .left-panel-controls {
+  .left-panel.d-flex .left-panel-controls {
       padding-left: 0px;
   }
-
-  .btn-secondary {
-    background-color: #555;
-    border: 1px solid #777;
-    border-radius: 8px;
-    color: #fff;
-    transition: background-color 0.3s ease;
-    padding: 0px;
-  }
-
-    .btn-secondary:hover {
-      background-color: #666;
-      border-color: #888;
+  
+    .left-panel.panel-collapsed {
+      display:none !important;
     }
 
-    .img-fluid {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
+    .left-panel-button.left-panel-button-open,
+    .left-panel-button.left-panel-button-close {
+      width: 45px;
+      height: 38px;
     }
+
+    .btn-secondary {
+      background-color: #555;
+      border: 1px solid #777;
+      border-radius: 8px;
+      color: #fff;
+      transition: background-color 0.3s ease;
+      padding: 0px;
+    }
+
+      .btn-secondary:hover {
+        background-color: #666;
+        border-color: #888;
+      }
+
+      .img-fluid {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
 
   .conversation-item {
     margin-bottom: 10px;
@@ -88,6 +106,25 @@ body.bg-dark {
 .chat-panel {
   min-width: 600px;
 }
+
+  .app-header {
+    border: 1px solid #555;
+    border-radius: 8px;
+    text-align: center;
+    margin-left: -3px !important;
+    margin-right: -3px !important;
+  }
+
+    .app-header .left-panel-button-open {
+      display:none;
+    }
+
+    .app-header.panel-collapsed .left-panel-button-open {
+      position: absolute;
+      display:inherit;
+      visibility: visible;
+      margin-left: 0px !important;
+    }
 
   .chat-form-container {
     border: 1px solid #555;
