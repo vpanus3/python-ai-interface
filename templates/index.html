@@ -21,10 +21,10 @@
           </div>
         </div>
         <div class="row p-2">
-          <ol class="list-group">
+          <ol class="list-group user-conversation-list">
             {% if user_session and user_session.user_conversations %}
               {% for user_conversation in user_session.user_conversations %}
-              <li class="list-group-item bg-secondary text-light d-flex align-items-center justify-content-between conversation-item">
+              <li class="user-conversation-item list-group-item bg-secondary text-light d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                   <img src="/static/flaticon-message.png" alt="Conversation" class="img-fluid me-2">
                   <div>{{ user_conversation.title }}</div>
