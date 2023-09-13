@@ -61,10 +61,20 @@ body.bg-dark {
     border: 1px solid #777;
     border-radius: 8px;
     transition: background-color 0.3s ease;
+    cursor: pointer; 
+    padding-right: 10px;
   }
 
     .user-conversation-list .user-conversation-item.list-group-item.bg-secondary:hover {
       background-color: #555 !important;
+    }
+
+    .user-conversation-list .user-conversation-item .btn {
+      padding: 0px;
+      margin: 0px;
+      margin-left: 10px;
+      width: 25px;
+      height: 25px;
     }
 
   .credits-button-container {
