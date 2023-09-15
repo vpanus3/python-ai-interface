@@ -96,31 +96,3 @@ class Conversation:
             messages = messages
         )
 
-@dataclass
-class UserConversation:
-    conversation_id: str = field(default=None)
-    user_id: str = field(default=None)
-    title: str = field(default=None)
-
-    def to_dict(self):
-        return {
-            'conversation_id': self.conversation_id,
-            'user_id': self.user_id,
-            'title': self.title
-        }
-
-    def to_json(self):
-        return json.dumps(self.to_dict())
-
-    @classmethod
-    def from_json(cls, json_str: str):
-        data_dict = json.loads(json_str)
-        return cls.from_dict(data_dict)
-
-    @classmethod
-    def from_dict(cls, data_dict: dict):
-        return cls(
-            conversation_id=data_dict.get('conversation_id', ''),
-            user_id=data_dict.get('user_id', ''),
-            title=data_dict.get('title', '')
-        )

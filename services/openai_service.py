@@ -4,7 +4,7 @@ import os
 import openai
 from typing import List, Dict, Optional
 from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse
-from models.conversation import Conversation, ConversationMessage
+from models.conversation_models import Conversation, ConversationMessage
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 TEMPERATURE = float(os.getenv("OPENAI_Temperature"))

@@ -6,7 +6,8 @@ import os
 import json
 from typing import List
 from azure.cosmos import CosmosClient
-from models.conversation import Conversation, UserConversation
+from models.user_models import UserConversation
+from models.conversation_models import Conversation
 
 ENDPOINT = os.environ["COSMOS_ENDPOINT"]
 KEY = os.environ["COSMOS_KEY"]
