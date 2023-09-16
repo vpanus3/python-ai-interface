@@ -55,7 +55,7 @@ class ConversationMessage:
 class Conversation:
     id: str = field(default=str(uuid.uuid4()))
     user_id: str = field(default=None)
-    title: str = field(default='')
+    title: str = field(default='New Conversation')
     messages: List[ConversationMessage] = field(default_factory=list)
 
     def get_chat_messages(self) -> List[ChatMessage]:

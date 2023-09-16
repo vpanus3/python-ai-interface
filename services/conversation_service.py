@@ -14,7 +14,7 @@ KEY = os.environ["COSMOS_KEY"]
 DATABASE_NAME = os.environ["COSMOS_DB"]
 CONVERSATIONS_CONTAINTER = os.environ["COSMOS_CONTIANER_CONVERSATIONS"]
 
-class CosmosService:
+class ConversationService:
 
     def __init__(self):
         self.client = CosmosClient(url=ENDPOINT, credential=KEY)
@@ -43,4 +43,11 @@ class CosmosService:
         conversation_dict = conversation.to_dict()
         conversation_dict = self.conversations_container.upsert_item(body=conversation_dict)
         return Conversation.from_dict(conversation_dict)
+    
+    def create_conversation(self, user_id: str) -> Conversation:
+        conversation = Conversation(
+            user_id=user_id
+        )
+        conversation = self.save_conversation(conversation)
+        return conversation
 

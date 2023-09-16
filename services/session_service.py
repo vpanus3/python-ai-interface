@@ -2,14 +2,14 @@
 
 from flask import Flask, redirect, render_template, request, url_for, session
 from models.user_models import UserSession
-from services.cosmos_service import CosmosService
+from services.conversation_service import ConversationService
 
 class SessionService:
 
     def __init__(self):
-        cosmos_service = CosmosService()
+        self.cosmos_service = ConversationService()
         # TODO Authentication
-        user_id = "48f9f0e7-3312-425b-8281-4f72ab9a1419"
+        self.user_id = "48f9f0e7-3312-425b-8281-4f72ab9a1419"
 
     def set_user_session(self, user_session: UserSession):
         session['user_session'] = user_session.to_dict()

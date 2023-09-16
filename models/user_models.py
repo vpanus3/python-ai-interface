@@ -33,6 +33,14 @@ class UserConversation:
             conversation_id=data_dict.get('conversation_id', ''),
             user_id=data_dict.get('user_id', ''),
             title=data_dict.get('title', '')
+        )  
+        
+    @classmethod
+    def from_conversation(cls, conversation: Conversation):
+        return UserConversation(
+            conversation_id = conversation.id,
+            user_id = conversation.user_id,
+            title = conversation.title
         )
 
 @dataclass
@@ -50,7 +58,7 @@ class UserSession:
 
     def to_json(self):
         return json.dumps(self.to_dict(), default=lambda o: o.value if isinstance(o, Enum) else None)
-
+    
     @classmethod
     def from_dict(cls, data_dict: dict):
         user_conversations = [UserConversation.from_dict(conv_dict) for conv_dict in data_dict.get('user_conversations', [])]
