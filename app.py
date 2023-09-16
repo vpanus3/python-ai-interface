@@ -47,7 +47,41 @@ def conversation_create():
     user_conversation = UserConversation.from_conversation(conversation)
     user_session.user_conversations.append(user_conversation)
     session_service.set_user_session(user_session)
-    return user_session.to_dict()
+    return jsonify(user_session.to_dict())
+
+@app.route("/conversation/switch", methods=["POST"])
+def conversation_switch():
+    conversation_id = request.args.get('conversation_id', None)
+    user_session = session_service.get_user_session()
+    user_session.conversation = None
+    conversation = conversation = conversation_service.get_conversation(
+        user_id=user_session.user_id,
+        conversation_id=conversation_id
+    )
+    user_session.conversation = conversation
+    session_service.set_user_session(user_session)
+    return jsonify(user_session.to_dict())
+
+@app.route("/conversation/delete", method=["DELETE"])
+def conversation_delete():
+    conversation_id = request.args.get('conversation_id', None)
+    user_session = session_service.get_user_session()
+    user_session.conversation = None
+    
+    #Delte conversation
+    #if current conversation, switch to newest
+    # if none, then what?
+    # if load initial, should I create a conversation?
+    
+
+    conversation = conversation = conversation_service.get_conversation(
+        user_id=user_session.user_id,
+        conversation_id=conversation_id
+    )
+    
+    user_session.conversation = conversation
+    session_service.set_user_session(user_session)
+    return jsonify(user_session.to_dict())
 
 def generate_prompt(message):
     return """ """.format(

@@ -73,37 +73,74 @@ function App() {
     }
   }, [loading, error, user_session]);
 
-    // Handle user submitting a message
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-    
-      const formData = new FormData();
-      formData.append('message', message);
-    
-      try {
-        const response = await fetch('/conversation', {
-          method: 'POST',
-          body: formData,
-        });
-    
-        if (response.ok) {
-          const updatedUserSession = await response.json();       
-          setUserSession(updatedUserSession);
-        } else {
-          throw new Error('Failed to post message');
-        }
-      } catch (err) {
-        console.log('Error:', err);
-        setError(err);
-      } finally {
-        setMessage('');  // Clear the message input
-      }
-    };
+  // Handle user submitting a message
+  const sendChatMessage = async (e) => {
+    e.preventDefault();
   
-    const handleInputChange = (e) => {
-      console.log('handleinputchange');
-      setMessage(e.target.value);
-    };
+    const formData = new FormData();
+    formData.append('message', message);
+  
+    try {
+      const response = await fetch('/conversation', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const updatedUserSession = await response.json();       
+        setUserSession(updatedUserSession);
+      } else {
+        throw new Error('Failed to post message');
+      }
+    } catch (err) {
+      console.log('Error:', err);
+      setError(err);
+    } finally {
+      setMessage('');  // Clear the message input
+    }
+  };
+  
+  const onChatMessageChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const createNewConversation = async () => {
+    try {
+      const response = await fetch('/conversation/create', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const updatedUserSession = await response.json();
+        setUserSession(updatedUserSession);
+      } else {
+        throw new Error('Failed to create new conversation');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      // Handle error accordingly
+    }
+  };
+
+  const switchConversation = async (conversationId) => {
+    try {
+      const response = await fetch(`/conversation/switch?conversation_id=${conversationId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        const updatedUserSession = await response.json();
+        setUserSession(updatedUserSession);
+      } else {
+        throw new Error('Failed to switch conversation');
+      }
+    } catch (error) {
+      console.error("There was a problem switching the conversation", error);
+    }
+  }; 
 
   // All useEffect statements need to precede this
   if (loading) return <p>Loading...</p>;
@@ -115,7 +152,7 @@ function App() {
         <div className="col-2 d-flex flex-column left-panel" id="left-panel">
           <div className="row p-2">
             <div className="col d-flex left-panel-controls">
-              <button className="btn btn-secondary flex-grow-1">+ New Conversation</button>
+              <button className="btn btn-secondary flex-grow-1" onClick={createNewConversation}>+ New Conversation</button>
               <button className="btn btn-secondary ms-2 left-panel-button left-panel-button-close" id="left-panel-button-close">
                 <img src="/static/flaticon-sidebar.png" alt="Sidebar" className="img-fluid" />
               </button>
@@ -124,10 +161,13 @@ function App() {
           <div className="row p-2">
             <ol className="list-group user-conversation-list">
               {user_session.user_conversations.map((user_conversation, index) => (
-                <li key={index} className="user-conversation-item list-group-item bg-secondary text-light d-flex align-items-center justify-content-between">
+                <li key={index}
+                    onClick={() => switchConversation(user_conversation.conversation_id)}
+                    className="user-conversation-item list-group-item bg-secondary text-light d-flex align-items-center justify-content-between"
+                >
                   <div className="d-flex align-items-center">
                     <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
-                    <div>{user_conversation.title}</div>
+                    <div>{user_conversation.title || "[Untitled]"}</div>
                   </div>
                   <div className="d-flex align-items-center">
                     <button className="btn btn-secondary btn-sm"><img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" /></button>
@@ -161,8 +201,8 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form onSubmit={handleSubmit} className="w-100 chat-form">
-                <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={handleInputChange}></textarea>
+              <form onSubmit={sendChatMessage} className="w-100 chat-form">
+                <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />
                 </button>
