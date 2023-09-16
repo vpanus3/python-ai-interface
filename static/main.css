@@ -9,6 +9,10 @@ body.bg-dark {
   padding-top: 10px;
 }
 
+  .app-container-row {
+    height: 99vh;
+  }
+
 .left-panel {
   width: 300px !important;
   display: flex;
@@ -54,7 +58,7 @@ body.bg-dark {
         margin-right: 10px;
       }
 
-  .user-conversation-list .user-conversation-item.list-group-item.bg-secondary {
+  .user-conversation-list .user-conversation-item.list-group-item {
     margin-bottom: 10px;
     font-size: 12px;
     background-color: #666;
@@ -65,7 +69,16 @@ body.bg-dark {
     padding-right: 10px;
   }
 
-    .user-conversation-list .user-conversation-item.list-group-item.bg-secondary:hover {
+    .user-conversation-list .user-conversation-item.list-group-item.bg-secondary {
+      background-color: #666;
+    }
+
+    .user-conversation-list .user-conversation-item.list-group-item.bg-active {
+      background-color: #969696;
+    }
+
+    .user-conversation-list .user-conversation-item.list-group-item.bg-secondary:hover,
+    .user-conversation-list .user-conversation-item.list-group-item.bg-active:hover {
       background-color: #555 !important;
     }
 
@@ -182,7 +195,7 @@ body.bg-dark {
   .chat-responses-container {
     border: 1px solid #555;
     border-radius: 8px;
-    max-height: 78vh;
+    height: 78.5vh;
     overflow-y: auto;
   }
 

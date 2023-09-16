@@ -148,7 +148,7 @@ function App() {
 
   return (
     <div className="container-fluid app-container">
-      <div className="row">
+      <div className="row app-container-row">
         <div className="col-2 d-flex flex-column left-panel" id="left-panel">
           <div className="row p-2">
             <div className="col d-flex left-panel-controls">
@@ -163,7 +163,10 @@ function App() {
               {user_session.user_conversations.map((user_conversation, index) => (
                 <li key={index}
                     onClick={() => switchConversation(user_conversation.conversation_id)}
-                    className="user-conversation-item list-group-item bg-secondary text-light d-flex align-items-center justify-content-between"
+                    className={
+                      `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
+                      ${user_session.conversation && user_conversation.conversation_id === user_session.conversation.id ? 'bg-active' : 'bg-secondary'}`
+                    }
                 >
                   <div className="d-flex align-items-center">
                     <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
@@ -179,17 +182,6 @@ function App() {
           </div>
           <div className="mt-auto credits-button-container">
             <button id="show-credits-btn" className="btn btn-secondary mt-3">Credits</button>
-          </div>
-          <div id="credits-overlay" className="credits-overlay"></div>
-          <div id="credits-container" className="credits-container">
-            <h2>Credits</h2>
-            <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
           </div>
         </div>
         <div className="col-5 mx-auto chat-panel">
@@ -244,6 +236,17 @@ function App() {
           </div>
         </div>
       </div>
+      <div id="credits-overlay" className="credits-overlay"></div>
+          <div id="credits-container" className="credits-container">
+            <h2>Credits</h2>
+            <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
+            <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
+          </div>
     </div>
   )
 }
