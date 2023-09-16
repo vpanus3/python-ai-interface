@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from models.conversation_models import Conversation
 from models.user_models import UserSession, UserConversation
 from services.conversation_service import ConversationService
@@ -7,6 +7,7 @@ from services.session_service import SessionService
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - multiple conversations, export chat history
+# TODO - Need a loading state for when waiting for message submit
 
 app = Flask(__name__)
 app.secret_key = "f9b0216e-f1e7-4914-8652-0fbcfc0972b7" 
@@ -24,7 +25,7 @@ def session_get() -> UserSession:
     return session_service.get_user_session().to_dict()
 
 @app.route("/conversation", methods=["POST"])
-def conversation_post():
+def conversation_post() -> UserSession:
     user_message = request.form["message"]
     user_session = session_service.get_user_session()
     conversation = user_session.conversation or Conversation()
@@ -35,7 +36,7 @@ def conversation_post():
     user_session.conversation = conversation
     session_service.set_user_session(user_session)
     conversation_service.save_conversation(user_session.conversation)
-    return redirect(url_for("index"))
+    return jsonify(user_session.to_dict())
 
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
@@ -46,7 +47,7 @@ def conversation_create():
     user_conversation = UserConversation.from_conversation(conversation)
     user_session.user_conversations.append(user_conversation)
     session_service.set_user_session(user_session)
-    return redirect(url_for("index"))
+    return user_session.to_dict()
 
 def generate_prompt(message):
     return """ """.format(

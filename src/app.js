@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [user_session, setData] = useState(null);
+  const [user_session, setUserSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState('');
 
+  // Load session immediately
   useEffect(() => {
     fetch('./session')
       .then(response => {
@@ -14,11 +16,12 @@ function App() {
           throw new Error('Failed to fetch UserSession');
         }
       })
-      .then(user_session => setData(user_session))
+      .then(user_session => setUserSession(user_session))
       .catch(error => setError(error))
       .finally(() => setLoading(false));
   }, []);
 
+  // Set javascript handlers after rendering the view without error
   useEffect(() => {
     if (!loading && !error && user_session) {
       function setupSidebar() {
@@ -70,10 +73,41 @@ function App() {
     }
   }, [loading, error, user_session]);
 
+    // Handle user submitting a message
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      const formData = new FormData();
+      formData.append('message', message);
+    
+      try {
+        const response = await fetch('/conversation', {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (response.ok) {
+          const updatedUserSession = await response.json();       
+          setUserSession(updatedUserSession);
+        } else {
+          throw new Error('Failed to post message');
+        }
+      } catch (err) {
+        console.log('Error:', err);
+        setError(err);
+      } finally {
+        setMessage('');  // Clear the message input
+      }
+    };
+  
+    const handleInputChange = (e) => {
+      console.log('handleinputchange');
+      setMessage(e.target.value);
+    };
+
+  // All useEffect statements need to precede this
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-  
 
   return (
     <div className="container-fluid app-container">
@@ -127,8 +161,8 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form action="/conversation" method="post" className="w-100 chat-form">
-                <textarea name="message" className="chat-textarea" placeholder="Send a message" required></textarea>
+              <form onSubmit={handleSubmit} className="w-100 chat-form">
+                <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={handleInputChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />
                 </button>
