@@ -50,4 +50,10 @@ class ConversationService:
         )
         conversation = self.save_conversation(conversation)
         return conversation
+    
+    def delete_conversation(self, user_id: str, converation_id: str):
+        self.conversations_container.delete_item(
+            item=converation_id,
+            partition_key=user_id
+        )
 

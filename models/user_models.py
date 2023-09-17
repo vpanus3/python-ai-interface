@@ -59,6 +59,15 @@ class UserSession:
     def to_json(self):
         return json.dumps(self.to_dict(), default=lambda o: o.value if isinstance(o, Enum) else None)
     
+    def update_conversation(self, conversation: Conversation | None):
+        self.conversation = conversation
+        if (conversation is not None):
+            for index, user_conversation in enumerate(self.user_conversations):
+                if user_conversation.conversation_id == conversation.id:
+                    updated_user_conversation = UserConversation.from_conversation(conversation)
+                    self.user_conversations[index] = updated_user_conversation
+                    break
+
     @classmethod
     def from_dict(cls, data_dict: dict):
         user_conversations = [UserConversation.from_dict(conv_dict) for conv_dict in data_dict.get('user_conversations', [])]

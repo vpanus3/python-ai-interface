@@ -90,10 +90,10 @@ function App() {
         const updatedUserSession = await response.json();       
         setUserSession(updatedUserSession);
       } else {
-        throw new Error('Failed to post message');
+        throw new Error('Failed to send chat message');
       }
     } catch (err) {
-      console.log('Error:', err);
+      console.log(err);
       setError(err);
     } finally {
       setMessage('');  // Clear the message input
@@ -117,8 +117,7 @@ function App() {
         throw new Error('Failed to create new conversation');
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      // Handle error accordingly
+      console.error(error);
     }
   };
 
@@ -138,9 +137,26 @@ function App() {
         throw new Error('Failed to switch conversation');
       }
     } catch (error) {
-      console.error("There was a problem switching the conversation", error);
+      console.error(error);
     }
-  }; 
+  };
+
+  const deleteConversation = async (conversationId) => {
+    try {
+      const response = await fetch(`/conversation/delete?conversation_id=${conversationId}`, {
+        method: 'DELETE'
+      });
+  
+      if (response.ok) {
+        const updatedUserSession = await response.json();
+        setUserSession(updatedUserSession);
+      } else {
+        throw new Error('Failed to delete conversation');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // All useEffect statements need to precede this
   if (loading) return <p>Loading...</p>;
@@ -174,7 +190,12 @@ function App() {
                   </div>
                   <div className="d-flex align-items-center">
                     <button className="btn btn-secondary btn-sm"><img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" /></button>
-                    <button className="btn btn-secondary btn-sm"><img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" /></button>
+                    <button className="btn btn-secondary btn-sm" onClick={(event) => {
+                      event.stopPropagation();
+                      deleteConversation(user_conversation.conversation_id)
+                    }}>
+                      <img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" />
+                    </button>
                   </div>
                 </li>
               ))}

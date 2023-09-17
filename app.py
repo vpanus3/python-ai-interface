@@ -33,7 +33,7 @@ def conversation_post() -> UserSession:
         user_id=user_session.user_id, 
         user_message=user_message, 
         conversation=conversation)    
-    user_session.conversation = conversation
+    user_session.update_conversation(conversation)
     session_service.set_user_session(user_session)
     conversation_service.save_conversation(user_session.conversation)
     return jsonify(user_session.to_dict())
@@ -54,7 +54,7 @@ def conversation_switch():
     conversation_id = request.args.get('conversation_id', None)
     user_session = session_service.get_user_session()
     user_session.conversation = None
-    conversation = conversation = conversation_service.get_conversation(
+    conversation = conversation_service.get_conversation(
         user_id=user_session.user_id,
         conversation_id=conversation_id
     )
@@ -62,24 +62,28 @@ def conversation_switch():
     session_service.set_user_session(user_session)
     return jsonify(user_session.to_dict())
 
-@app.route("/conversation/delete", method=["DELETE"])
+@app.route("/conversation/delete", methods=["DELETE"])
 def conversation_delete():
-    conversation_id = request.args.get('conversation_id', None)
+    deleted_conversation_id = request.args.get('conversation_id', None)
     user_session = session_service.get_user_session()
-    user_session.conversation = None
-    
-    #Delte conversation
-    #if current conversation, switch to newest
-    # if none, then what?
-    # if load initial, should I create a conversation?
-    
-
-    conversation = conversation = conversation_service.get_conversation(
+    current_conversation_id = user_session.conversation.id
+    conversation_service.delete_conversation(
         user_id=user_session.user_id,
-        conversation_id=conversation_id
+        converation_id=deleted_conversation_id
     )
-    
-    user_session.conversation = conversation
+
+    user_session.conversation = None
+    user_session.user_conversations = list(filter(
+        lambda user_conversation: user_conversation.conversation_id != deleted_conversation_id, user_session.user_conversations)
+    )
+    if (current_conversation_id == deleted_conversation_id and len(user_session.user_conversations) > 0):
+        current_conversation_id = user_session.user_conversations[0].conversation_id
+        conversation = conversation_service.get_conversation(
+            user_id=user_session.user_id,
+            conversation_id=current_conversation_id
+        )
+        user_session.conversation = conversation
+        
     session_service.set_user_session(user_session)
     return jsonify(user_session.to_dict())
 
