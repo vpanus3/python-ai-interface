@@ -46,6 +46,32 @@ class UserConversation:
 @dataclass
 class UserSession:
     user_id: str = field(default=None)
+    conversation_id: str = field(default=None)
+
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'conversation_id': self.conversation_id,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), default=lambda o: o.value if isinstance(o, Enum) else None)
+
+    @classmethod
+    def from_dict(cls, data_dict: dict):
+        return cls(
+            user_id=data_dict.get('user_id', ''),
+            conversation_id=data_dict.get('conversation_id', ''),
+        )
+
+    @classmethod
+    def from_json(cls, json_str: str):
+        data_dict = json.loads(json_str)
+        return cls.from_dict(data_dict)
+
+@dataclass
+class UserState:
+    user_id: str = field(default=None)
     user_conversations: List[UserConversation] = field(default_factory=list)
     conversation: Conversation = field(default=None)
 

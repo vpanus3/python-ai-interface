@@ -7,7 +7,7 @@ from services.conversation_service import ConversationService
 class SessionService:
 
     def __init__(self):
-        self.cosmos_service = ConversationService()
+        self.conversation_service = ConversationService()
         # TODO Authentication
         self.user_id = "48f9f0e7-3312-425b-8281-4f72ab9a1419"
 
@@ -22,15 +22,11 @@ class SessionService:
         else:
             user_session = UserSession()
             user_session.user_id = self.user_id   # TODO - figure out authentication
-            user_conversations = self.cosmos_service.get_user_conversations(user_session.user_id)
-            if (user_conversations and len(user_conversations) > 0):
-                user_session.user_conversations = user_conversations
-                user_conversation = user_conversations[0]  #TODO - save last conversation
-                conversation = self.cosmos_service.get_conversation(
-                    user_id=user_conversation.user_id,
-                    conversation_id=user_conversation.conversation_id
-                )
-                if conversation is not None:
-                    user_session.conversation = conversation
             self.set_user_session(user_session)
         return user_session
+    
+    def set_conversation_id(self, conversation_id: str | None):
+        user_session = self.get_user_session()
+        user_session.conversation_id = conversation_id
+        self.set_user_session(user_session)
+        

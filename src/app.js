@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [user_session, setUserSession] = useState(null);
+  const [user_state, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
 
   // Load session immediately
   useEffect(() => {
-    fetch('./session')
+    fetch('./state')
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -16,14 +16,14 @@ function App() {
           throw new Error('Failed to fetch UserSession');
         }
       })
-      .then(user_session => setUserSession(user_session))
+      .then(user_state => setUserState(user_state))
       .catch(error => setError(error))
       .finally(() => setLoading(false));
   }, []);
 
   // Set javascript handlers after rendering the view without error
   useEffect(() => {
-    if (!loading && !error && user_session) {
+    if (!loading && !error && user_state) {
       function setupSidebar() {
         const leftPanel = document.getElementById('left-panel');
         const appHeader = document.getElementById('app-header');
@@ -71,7 +71,7 @@ function App() {
       setupCreditsButton();
       
     }
-  }, [loading, error, user_session]);
+  }, [loading, error, user_state]);
 
   // Handle user submitting a message
   const sendChatMessage = async (e) => {
@@ -81,14 +81,14 @@ function App() {
     formData.append('message', message);
   
     try {
-      const response = await fetch('/conversation', {
+      const response = await fetch('/conversation/message', {
         method: 'POST',
         body: formData,
       });
   
       if (response.ok) {
         const updatedUserSession = await response.json();       
-        setUserSession(updatedUserSession);
+        setUserState(updatedUserSession);
       } else {
         throw new Error('Failed to send chat message');
       }
@@ -112,7 +112,7 @@ function App() {
 
       if (response.ok) {
         const updatedUserSession = await response.json();
-        setUserSession(updatedUserSession);
+        setUserState(updatedUserSession);
       } else {
         throw new Error('Failed to create new conversation');
       }
@@ -132,7 +132,7 @@ function App() {
   
       if (response.ok) {
         const updatedUserSession = await response.json();
-        setUserSession(updatedUserSession);
+        setUserState(updatedUserSession);
       } else {
         throw new Error('Failed to switch conversation');
       }
@@ -149,7 +149,7 @@ function App() {
   
       if (response.ok) {
         const updatedUserSession = await response.json();
-        setUserSession(updatedUserSession);
+        setUserState(updatedUserSession);
       } else {
         throw new Error('Failed to delete conversation');
       }
@@ -176,12 +176,12 @@ function App() {
           </div>
           <div className="row p-2">
             <ol className="list-group user-conversation-list">
-              {user_session.user_conversations.map((user_conversation, index) => (
+              {user_state.user_conversations.map((user_conversation, index) => (
                 <li key={index}
                     onClick={() => switchConversation(user_conversation.conversation_id)}
                     className={
                       `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
-                      ${user_session.conversation && user_conversation.conversation_id === user_session.conversation.id ? 'bg-active' : 'bg-secondary'}`
+                      ${user_state.conversation && user_conversation.conversation_id === user_state.conversation.id ? 'bg-active' : 'bg-secondary'}`
                     }
                 >
                   <div className="d-flex align-items-center">
@@ -222,8 +222,8 @@ function App() {
               </form>
             </div>
             <div className="chat-responses-container text-light rounded">
-              {user_session && user_session.conversation ? (
-                user_session.conversation.messages
+              {user_state && user_state.conversation ? (
+                user_state.conversation.messages
                   .slice(0)
                   .reverse()
                   .map((message, index) => {
