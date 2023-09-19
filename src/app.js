@@ -5,6 +5,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [newTitle, setNewTitle] = useState('');
 
   // Load session immediately
   useEffect(() => {
@@ -143,19 +145,32 @@ function App() {
 
   const deleteConversation = async (conversationId) => {
     try {
-      const response = await fetch(`/conversation/delete?conversation_id=${conversationId}`, {
-        method: 'DELETE'
-      });
-  
-      if (response.ok) {
-        const updatedUserSession = await response.json();
-        setUserState(updatedUserSession);
-      } else {
-        throw new Error('Failed to delete conversation');
+      const isConfirmed = window.confirm("Are you sure you want to delete this chat?");
+      if (isConfirmed) {
+        const response = await fetch(`/conversation/delete?conversation_id=${conversationId}`, {
+          method: 'DELETE'
+        });
+    
+        if (response.ok) {
+          const updatedUserSession = await response.json();
+          setUserState(updatedUserSession);
+        } else {
+          throw new Error('Failed to delete conversation');
+        }
       }
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleEdit = (id, currentTitle) => {
+    setEditingId(id);
+    setNewTitle(currentTitle);
+  };
+
+  const handleSave = (id) => {
+    // Logic to update the title in user_state
+    setEditingId(null);
   };
 
   // All useEffect statements need to precede this
@@ -175,31 +190,46 @@ function App() {
             </div>
           </div>
           <div className="row p-2">
-            <ol className="list-group user-conversation-list">
-              {user_state.user_conversations.map((user_conversation, index) => (
-                <li key={index}
-                    onClick={() => switchConversation(user_conversation.conversation_id)}
-                    className={
-                      `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
-                      ${user_state.conversation && user_conversation.conversation_id === user_state.conversation.id ? 'bg-active' : 'bg-secondary'}`
-                    }
-                >
-                  <div className="d-flex align-items-center">
-                    <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
-                    <div>{user_conversation.title || "[Untitled]"}</div>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <button className="btn btn-secondary btn-sm"><img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" /></button>
-                    <button className="btn btn-secondary btn-sm" onClick={(event) => {
-                      event.stopPropagation();
-                      deleteConversation(user_conversation.conversation_id)
-                    }}>
-                      <img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ol>
+          <ol className="list-group user-conversation-list">
+      {user_state.user_conversations.map((user_conversation, index) => (
+        <li 
+          key={index}
+          onClick={() => switchConversation(user_conversation.conversation_id)}
+          className={
+            `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
+            ${user_state.conversation && user_conversation.conversation_id === user_state.conversation.id ? 'bg-active' : 'bg-secondary'}`
+          }
+        >
+          <div className="d-flex align-items-center">
+            <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
+            {editingId === user_conversation.conversation_id ? (
+              <input 
+                type="text" 
+                value={newTitle} 
+                onChange={(e) => setNewTitle(e.target.value)} 
+              />
+            ) : (
+              <div>{user_conversation.title || "[Untitled]"}</div>
+            )}
+          </div>
+          <div className="d-flex align-items-center">
+            {editingId === user_conversation.conversation_id ? (
+              <button className="btn btn-secondary btn-sm" onClick={() => handleSave(user_conversation.conversation_id)}>Save</button>
+            ) : (
+              <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(user_conversation.conversation_id, user_conversation.title)}>
+                <img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" />
+              </button>
+            )}
+            <button className="btn btn-secondary btn-sm" onClick={(event) => {
+              event.stopPropagation();
+              deleteConversation(user_conversation.conversation_id);
+            }}>
+              <img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" />
+            </button>
+          </div>
+        </li>
+      ))}
+    </ol>
           </div>
           <div className="mt-auto credits-button-container">
             <button id="show-credits-btn" className="btn btn-secondary mt-3">Credits</button>
