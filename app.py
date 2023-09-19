@@ -7,8 +7,10 @@ from services.session_service import SessionService
 from services.state_service import StateService
 
 # TODO - system prompt - create, don't expose, store with history
-# TODO - multiple conversations, export chat history
+# TODO - Format output
+# TODO - export chat history
 # TODO - Need a loading state for when waiting for message submit
+# TODO - Streaming
 
 app = Flask(__name__)
 app.secret_key = "f9b0216e-f1e7-4914-8652-0fbcfc0972b7" 
