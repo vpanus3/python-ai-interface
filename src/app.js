@@ -89,8 +89,8 @@ function App() {
       });
   
       if (response.ok) {
-        const updatedUserSession = await response.json();       
-        setUserState(updatedUserSession);
+        const updatedUserState = await response.json();       
+        setUserState(updatedUserState);
       } else {
         throw new Error('Failed to send chat message');
       }
@@ -113,8 +113,8 @@ function App() {
       });
 
       if (response.ok) {
-        const updatedUserSession = await response.json();
-        setUserState(updatedUserSession);
+        const updatedUserState = await response.json();
+        setUserState(updatedUserState);
       } else {
         throw new Error('Failed to create new conversation');
       }
@@ -133,8 +133,8 @@ function App() {
       });
   
       if (response.ok) {
-        const updatedUserSession = await response.json();
-        setUserState(updatedUserSession);
+        const updatedUserState = await response.json();
+        setUserState(updatedUserState);
       } else {
         throw new Error('Failed to switch conversation');
       }
@@ -152,8 +152,8 @@ function App() {
         });
     
         if (response.ok) {
-          const updatedUserSession = await response.json();
-          setUserState(updatedUserSession);
+          const updatedUserState = await response.json();
+          setUserState(updatedUserState);
         } else {
           throw new Error('Failed to delete conversation');
         }
@@ -163,14 +163,34 @@ function App() {
     }
   };
 
-  const handleEdit = (id, currentTitle) => {
-    setEditingId(id);
+  const handleEdit = (conversationId, currentTitle) => {
+    setEditingId(conversationId);
     setNewTitle(currentTitle);
   };
 
-  const handleSave = (id) => {
-    // Logic to update the title in user_state
-    setEditingId(null);
+  const handleSave = async (conversationId) => {
+    try {
+      const response = await fetch('/conversation/rename', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          conversation_id: conversationId, 
+          title: newTitle 
+        }),
+      });
+  
+      if (response.ok) {
+        const updatedUserState = await response.json();
+        setUserState(updatedUserState);
+        setEditingId(null);
+      } else {
+        throw new Error('Failed to rename conversation');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // All useEffect statements need to precede this
@@ -206,7 +226,8 @@ function App() {
               <input 
                 type="text" 
                 value={newTitle} 
-                onChange={(e) => setNewTitle(e.target.value)} 
+                onChange={(e) => setNewTitle(e.target.value)}
+                onKeyDown={(e) => e.key === 'Escape' && setEditingId(null)}
               />
             ) : (
               <div>{user_conversation.title || "[Untitled]"}</div>
@@ -214,7 +235,7 @@ function App() {
           </div>
           <div className="d-flex align-items-center">
             {editingId === user_conversation.conversation_id ? (
-              <button className="btn btn-secondary btn-sm" onClick={() => handleSave(user_conversation.conversation_id)}>Save</button>
+              <button className="btn btn-secondary btn-sm" onClick={() => handleSave(user_conversation.conversation_id)}>{"\u2713"}</button>
             ) : (
               <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(user_conversation.conversation_id, user_conversation.title)}>
                 <img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" />

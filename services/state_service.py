@@ -64,3 +64,8 @@ class StateService:
             self.session_service.set_conversation_id(None)
         user_state = self.get_user_state()
         return user_state
+    
+    def on_conversation_rename(self, conversation: Conversation) -> UserState:
+        user_state = self.get_user_state()
+        user_state.conversation = conversation
+        return user_state

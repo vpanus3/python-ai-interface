@@ -57,3 +57,9 @@ class ConversationService:
             partition_key=user_id
         )
 
+    def rename_conversation(self, user_id: str, conversation_id: str, title: str) -> Conversation:
+        conversation = self.get_conversation(user_id, conversation_id)
+        conversation.title = title
+        conversation = self.save_conversation(conversation)
+        return conversation
+

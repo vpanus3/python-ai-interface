@@ -71,6 +71,22 @@ def conversation_delete():
     user_state = state_service.on_conversation_deleted(deleted_conversation_id)
     return jsonify(user_state.to_dict())
 
+@app.route("/conversation/rename", methods=["PUT"])
+def conversation_rename():
+    data = request.get_json()
+    conversation_id = data.get('conversation_id')
+    title = data.get('title')
+    user_session = session_service.get_user_session()
+    conversation = conversation_service.rename_conversation(
+        user_id=user_session.user_id,
+        conversation_id=conversation_id,
+        title=title
+    )
+    user_state = state_service.on_conversation_rename(conversation)
+
+    return jsonify(user_state.to_dict())
+
+
 def generate_prompt(message):
     return """ """.format(
         message
