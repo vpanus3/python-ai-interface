@@ -9,6 +9,7 @@ from models.openai_models import ChatRole, FinishReason, ChatMessage
 
 @dataclass
 class ConversationMessage:
+    id: str = field(default=str(uuid.uuid4()))
     content: str = field(default='')
     role: ChatRole = field(default=None)
     created: int = field(default=None)
@@ -21,6 +22,7 @@ class ConversationMessage:
 
     def to_dict(self) -> Dict:
         return {
+            'id': self.id,
             'content': self.content,
             'role': self.role.value if self.role else None,
             'created': self.created,
@@ -43,6 +45,7 @@ class ConversationMessage:
         role = ChatRole(message_dict['role']) if message_dict.get('role') else None
         finish_reason = FinishReason(message_dict['finish_reason']) if message_dict.get('finish_reason') else None
         return cls(
+            id=message_dict['id'],
             content=message_dict['content'],
             role=role,
             created=message_dict['created'],

@@ -7,7 +7,6 @@ from services.session_service import SessionService
 from services.state_service import StateService
 
 # TODO - system prompt - create, don't expose, store with history
-# TODO - Format output
 # TODO - export chat history
 # TODO - Need a loading state for when waiting for message submit
 # TODO - Streaming

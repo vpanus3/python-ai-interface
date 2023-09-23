@@ -5,6 +5,7 @@
 import os
 import json
 from typing import List
+import uuid
 from azure.cosmos import CosmosClient
 from models.user_models import UserConversation
 from models.conversation_models import Conversation

@@ -195,6 +195,20 @@ function App() {
     }
   };
 
+  const handleCopyClick = (elementId) => {
+    const codeBlock = document.getElementById(elementId);
+    if (codeBlock) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(codeBlock);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+      console.log('Code copied successfully!');
+    }
+  };
+
   const formatMessage = (message) => {
     const lines = message.split('\n');
     const formattedLines = [];
@@ -205,20 +219,6 @@ function App() {
     
     // This regular expression will match any line that starts with ``` and capture any characters following it
     const codeBlockRegex = /^```(.*)$/;
-
-    const handleCopyClick = (codeBlockId) => {
-      const codeBlock = document.getElementById(codeBlockId);
-      if (codeBlock) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(codeBlock);
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
-        console.log('Code copied successfully!');
-      }
-    };
 
     lines.forEach((line, index) => {
       const match = codeBlockRegex.exec(line.trim());  // Attempt to match the line against the regex
@@ -231,9 +231,7 @@ function App() {
             <div key={`code-${index}`} className="code-container">
               <div className="code-header">
                 <span className="code-language">{language}</span>
-                <button className="copy-button" onClick={() => handleCopyClick(uniqueId)}>
-                  <img src="/static/flaticon-duplicate.png" alt="Copy" className="img-fluid" /> Copy Code
-                </button>
+                <img src="/static/flaticon-duplicate.png" alt="Copy" title="Copy Code" className="copy-code-button img-fluid" onClick={() => handleCopyClick(uniqueId)} />
               </div>
               <SyntaxHighlighter language={language} style={docco} id={uniqueId}>
                 {codeLines.join('\n')}
@@ -358,30 +356,25 @@ function App() {
                   .reverse()
                   .map((message, index) => {
                     const formattedContent = formatMessage(message.content);
+                    let imageLink="/static/flaticon-user.png"
+                    let altMessage="User"
+                    let className="alert alert-dark chat-message"
                     if (message.role === "assistant") {
-                      return (
-                        <div key={index} className="alert alert-secondary chat-message">
-                          <img
-                            src="/static/flaticon-brain.png"
-                            alt="Bot"
-                            className="img-fluid"
-                          />
-                          <span>{formattedContent}</span>
-                        </div>
-                      );
-                    } else if (message.role === "user") {
-                      return (
-                        <div key={index} className="alert alert-dark chat-message">
-                          <img
-                            src="/static/flaticon-user.png"
-                            alt="User"
-                            className="img-fluid"
-                          />
-                          <span>{formattedContent}</span>
-                        </div>
-                      );
+                      imageLink="/static/flaticon-brain.png";
+                      altMessage="Bot";
+                      className="alert alert-secondary chat-message";
                     }
-                    return null; // or you can return an empty fragment <> </>
+                    return (
+                      <div key={index} className={className} id={message.id}>
+                        <img
+                          src={imageLink}
+                          alt={altMessage}
+                          className="message-role-image img-fluid"
+                        />
+                        <img src="/static/flaticon-duplicate.png" alt="Copy" tile="Copy Message" className="copy-message-button img-fluid" onClick={() => handleCopyClick(message.id)}/>
+                        <span>{formattedContent}</span>
+                      </div>
+                    );
                   })
               ) : null}
             </div>
