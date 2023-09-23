@@ -182,8 +182,8 @@ body.bg-dark {
       }
 
           .btn-chat-generate:focus {
-            outline: 2px solid #007bff; /* Or any color you prefer */
-            box-shadow: 0 0 5px #007bff; /* Optional, for additional emphasis */
+            outline: 2px solid #007bff;
+            box-shadow: 0 0 5px #007bff;
           }
 
           .btn-chat-generate img.img-fluid {
@@ -206,31 +206,42 @@ body.bg-dark {
     }
 
       .chat-message img {
-        margin-left: 0px; /* Adjust as needed */
+        margin-left: 0px;
       }
       
       .chat-message span {
         flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
-      .chat-message .code-header {
+      .format-message-container .code-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         background-color: grey;
         padding: 5px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        max-width: 475px;
       }
       
-        .chat-message .code-language {
-          font-size: 12px;
+        .code-header .code-language {         
+          font-size: 16px;
+          color: white;
+          font-weight: bold;
+          margin-left: 10px;
         }
         
-        .chat-message .copy-button {
+        .code-header .copy-button {
           font-size: 12px;
           cursor: pointer;
         }
 
-      .chat-message pre
-      {
-        width: 450px;
-      }
+        .code-container pre
+        {
+          max-width: 475px;
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
 

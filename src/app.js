@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import Clipboard from 'clipboard';
 
 function App() {
   const [user_state, setUserState] = useState(null);
@@ -202,31 +201,49 @@ function App() {
     let listItems = [];
     let isCode = false;
     let codeLines = [];
-    const codeBlockRegex = /^```.*$/; // This will match any line that starts with ```
-  
-    const handleCopyClick = () => {
-      const clipboard = new Clipboard('.copy-button', {
-        text: function() {
-          return codeLines.join('\n');
-        }
-      });
-      clipboard.on('success', function() {
+    let language = null;
+    
+    // This regular expression will match any line that starts with ``` and capture any characters following it
+    const codeBlockRegex = /^```(.*)$/;
+
+    const handleCopyClick = (codeBlockId) => {
+      const codeBlock = document.getElementById(codeBlockId);
+      if (codeBlock) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(codeBlock);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand('copy');
+        selection.removeAllRanges();
         console.log('Code copied successfully!');
-      });
+      }
     };
 
     lines.forEach((line, index) => {
-      if (codeBlockRegex.test(line.trim())) {
+      const match = codeBlockRegex.exec(line.trim());  // Attempt to match the line against the regex
+      if (match) {
         if (isCode) {
+          const uniqueId = Math.random().toString(36).substring(2, 9);
           isCode = false;
+
           formattedLines.push(
-            <SyntaxHighlighter key={`code-${index}`} language="python" style={docco}>
-              {codeLines.join('\n')}
-            </SyntaxHighlighter>
+            <div key={`code-${index}`} className="code-container">
+              <div className="code-header">
+                <span className="code-language">{language}</span>
+                <button className="copy-button" onClick={() => handleCopyClick(uniqueId)}>
+                  <img src="/static/flaticon-duplicate.png" alt="Copy" className="img-fluid" /> Copy Code
+                </button>
+              </div>
+              <SyntaxHighlighter language={language} style={docco} id={uniqueId}>
+                {codeLines.join('\n')}
+              </SyntaxHighlighter>
+            </div>
           );
           codeLines = [];
         } else {
           isCode = true;
+          language = match[1] || 'plaintext';
         }
         return;
       }
@@ -251,14 +268,8 @@ function App() {
       formattedLines.push(<ul key={`ul-last`}>{listItems}</ul>);
     }
   
-    return <div>{formattedLines}</div>;
+    return <div className="format-message-container">{formattedLines}</div>;
   };
-  
-  
-  
-  
-  
-  
   
 
   // All useEffect statements need to precede this
@@ -278,47 +289,47 @@ function App() {
             </div>
           </div>
           <div className="row p-2">
-          <ol className="list-group user-conversation-list">
-      {user_state.user_conversations.map((user_conversation, index) => (
-        <li 
-          key={index}
-          onClick={() => switchConversation(user_conversation.conversation_id)}
-          className={
-            `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
-            ${user_state.conversation && user_conversation.conversation_id === user_state.conversation.id ? 'bg-active' : 'bg-secondary'}`
-          }
-        >
-          <div className="d-flex align-items-center">
-            <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
-            {editingId === user_conversation.conversation_id ? (
-              <input 
-                type="text" 
-                value={newTitle} 
-                onChange={(e) => setNewTitle(e.target.value)}
-                onKeyDown={(e) => e.key === 'Escape' && setEditingId(null)}
-              />
-            ) : (
-              <div>{user_conversation.title || "[Untitled]"}</div>
-            )}
-          </div>
-          <div className="d-flex align-items-center">
-            {editingId === user_conversation.conversation_id ? (
-              <button className="btn btn-secondary btn-sm" onClick={() => handleSave(user_conversation.conversation_id)}>{"\u2713"}</button>
-            ) : (
-              <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(user_conversation.conversation_id, user_conversation.title)}>
-                <img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" />
-              </button>
-            )}
-            <button className="btn btn-secondary btn-sm" onClick={(event) => {
-              event.stopPropagation();
-              deleteConversation(user_conversation.conversation_id);
-            }}>
-              <img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" />
-            </button>
-          </div>
-        </li>
-      ))}
-    </ol>
+            <ol className="list-group user-conversation-list">
+              {user_state.user_conversations.map((user_conversation, index) => (
+                <li 
+                  key={index}
+                  onClick={() => switchConversation(user_conversation.conversation_id)}
+                  className={
+                    `user-conversation-item list-group-item text-light d-flex align-items-center justify-content-between 
+                    ${user_state.conversation && user_conversation.conversation_id === user_state.conversation.id ? 'bg-active' : 'bg-secondary'}`
+                  }
+                >
+                  <div className="d-flex align-items-center">
+                    <img src="/static/flaticon-message.png" alt="Conversation" className="img-fluid me-2" />
+                    {editingId === user_conversation.conversation_id ? (
+                      <input 
+                        type="text" 
+                        value={newTitle} 
+                        onChange={(e) => setNewTitle(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Escape' && setEditingId(null)}
+                      />
+                    ) : (
+                      <div>{user_conversation.title || "[Untitled]"}</div>
+                    )}
+                  </div>
+                  <div className="d-flex align-items-center">
+                    {editingId === user_conversation.conversation_id ? (
+                      <button className="btn btn-secondary btn-sm" onClick={() => handleSave(user_conversation.conversation_id)}>{"\u2713"}</button>
+                    ) : (
+                      <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(user_conversation.conversation_id, user_conversation.title)}>
+                        <img src="/static/flaticon-edit.png" alt="Edit" className="img-fluid" />
+                      </button>
+                    )}
+                    <button className="btn btn-secondary btn-sm" onClick={(event) => {
+                      event.stopPropagation();
+                      deleteConversation(user_conversation.conversation_id);
+                    }}>
+                      <img src="/static/flaticon-delete.png" alt="Delete" className="img-fluid" />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
           <div className="mt-auto credits-button-container">
             <button id="show-credits-btn" className="btn btn-secondary mt-3">Credits</button>
@@ -378,16 +389,17 @@ function App() {
         </div>
       </div>
       <div id="credits-overlay" className="credits-overlay"></div>
-          <div id="credits-container" className="credits-container">
-            <h2>Credits</h2>
-            <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
-            <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
-          </div>
+      <div id="credits-container" className="credits-container">
+        <h2>Credits</h2>
+        <div><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by kmg design - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/sidebar" title="sidebar icons">Sidebar icons created by Royyan Wijaya - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/edit" title="edit icons">Edit icons created by Kiranshastry - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/delete" title="delete icons">Delete icons created by Kiranshastry - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/duplicate" title="duplicate icons">Duplicate icons created by Erix - Flaticon</a></div>
+      </div>
     </div>
   )
 }
