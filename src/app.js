@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 function App() {
   const [user_state, setUserState] = useState(null);
@@ -193,6 +194,50 @@ function App() {
     }
   };
 
+  const formatMessage = (message) => {
+    // Check if the message is a code block
+    if (message.startsWith("```") && message.endsWith("```")) {
+      const code = message.slice(3, -3);
+      return (
+        <SyntaxHighlighter language="javascript" style={docco}>
+          {code}
+        </SyntaxHighlighter>
+      );
+    } else {
+      // Handle text content
+      const lines = message.split('\n');
+      const formattedLines = [];
+      let listItems = [];
+  
+      lines.forEach((line, index) => {
+        if (line.startsWith("- ")) {  // This is a bullet point
+          listItems.push(<li key={`li-${index}`}>{line.slice(2)}</li>);
+        } else {  // This is regular text
+          if (listItems.length > 0) {
+            formattedLines.push(<ul key={`ul-${index}`}>{listItems}</ul>);
+            listItems = [];
+          }
+          formattedLines.push(<p key={`p-${index}`}>{line}</p>);
+        }
+      });
+  
+      if (listItems.length > 0) {  // Add remaining list items
+        formattedLines.push(<ul key={`ul-last`}>{listItems}</ul>);
+      }
+  
+      return (
+        <div>
+          {formattedLines}
+        </div>
+      );
+    }
+  };
+  
+  
+  
+  
+  
+
   // All useEffect statements need to precede this
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -278,6 +323,7 @@ function App() {
                   .slice(0)
                   .reverse()
                   .map((message, index) => {
+                    const formattedContent = formatMessage(message.content);
                     if (message.role === "assistant") {
                       return (
                         <div key={index} className="alert alert-secondary chat-message">
@@ -286,7 +332,7 @@ function App() {
                             alt="Bot"
                             className="img-fluid"
                           />
-                          <span>{message.content}</span>
+                          <span>{formattedContent}</span>
                         </div>
                       );
                     } else if (message.role === "user") {
@@ -297,7 +343,7 @@ function App() {
                             alt="User"
                             className="img-fluid"
                           />
-                          <span>{message.content}</span>
+                          <span>{formattedContent}</span>
                         </div>
                       );
                     }
