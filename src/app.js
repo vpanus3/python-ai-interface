@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import Clipboard from 'clipboard';
 
 function App() {
   const [user_state, setUserState] = useState(null);
@@ -195,43 +197,64 @@ function App() {
   };
 
   const formatMessage = (message) => {
-    // Check if the message is a code block
-    if (message.startsWith("```") && message.endsWith("```")) {
-      const code = message.slice(3, -3);
-      return (
-        <SyntaxHighlighter language="javascript" style={docco}>
-          {code}
-        </SyntaxHighlighter>
-      );
-    } else {
-      // Handle text content
-      const lines = message.split('\n');
-      const formattedLines = [];
-      let listItems = [];
+    const lines = message.split('\n');
+    const formattedLines = [];
+    let listItems = [];
+    let isCode = false;
+    let codeLines = [];
+    const codeBlockRegex = /^```.*$/; // This will match any line that starts with ```
   
-      lines.forEach((line, index) => {
-        if (line.startsWith("- ")) {  // This is a bullet point
-          listItems.push(<li key={`li-${index}`}>{line.slice(2)}</li>);
-        } else {  // This is regular text
-          if (listItems.length > 0) {
-            formattedLines.push(<ul key={`ul-${index}`}>{listItems}</ul>);
-            listItems = [];
-          }
-          formattedLines.push(<p key={`p-${index}`}>{line}</p>);
+    const handleCopyClick = () => {
+      const clipboard = new Clipboard('.copy-button', {
+        text: function() {
+          return codeLines.join('\n');
         }
       });
-  
-      if (listItems.length > 0) {  // Add remaining list items
-        formattedLines.push(<ul key={`ul-last`}>{listItems}</ul>);
+      clipboard.on('success', function() {
+        console.log('Code copied successfully!');
+      });
+    };
+
+    lines.forEach((line, index) => {
+      if (codeBlockRegex.test(line.trim())) {
+        if (isCode) {
+          isCode = false;
+          formattedLines.push(
+            <SyntaxHighlighter key={`code-${index}`} language="python" style={docco}>
+              {codeLines.join('\n')}
+            </SyntaxHighlighter>
+          );
+          codeLines = [];
+        } else {
+          isCode = true;
+        }
+        return;
       }
   
-      return (
-        <div>
-          {formattedLines}
-        </div>
-      );
+      if (isCode) {
+        codeLines.push(line);
+        return;
+      }
+  
+      if (line.startsWith("- ")) {
+        listItems.push(<li key={`li-${index}`}>{line.slice(2)}</li>);
+      } else {
+        if (listItems.length > 0) {
+          formattedLines.push(<ul key={`ul-${index}`}>{listItems}</ul>);
+          listItems = [];
+        }
+        formattedLines.push(<p key={`p-${index}`}>{line}</p>);
+      }
+    });
+  
+    if (listItems.length > 0) {
+      formattedLines.push(<ul key={`ul-last`}>{listItems}</ul>);
     }
+  
+    return <div>{formattedLines}</div>;
   };
+  
+  
   
   
   

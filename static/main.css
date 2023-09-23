@@ -205,11 +205,32 @@ body.bg-dark {
       align-items: flex-start;
     }
 
-    .chat-message img {
-      margin-left: 0px; /* Adjust as needed */
-    }
-    
-    .chat-message span {
-      flex: 1;
-    }
+      .chat-message img {
+        margin-left: 0px; /* Adjust as needed */
+      }
+      
+      .chat-message span {
+        flex: 1;
+      }
+
+      .chat-message .code-header {
+        display: flex;
+        justify-content: space-between;
+        background-color: grey;
+        padding: 5px;
+      }
+      
+        .chat-message .code-language {
+          font-size: 12px;
+        }
+        
+        .chat-message .copy-button {
+          font-size: 12px;
+          cursor: pointer;
+        }
+
+      .chat-message pre
+      {
+        width: 450px;
+      }
 
