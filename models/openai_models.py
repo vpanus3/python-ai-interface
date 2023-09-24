@@ -29,10 +29,11 @@ class ChatMessage:
 
 class ChatCompletionRequest:
 
-    def __init__(self, model: str, messages: List[ChatMessage], temperature: float):
+    def __init__(self, model: str, messages: List[ChatMessage], temperature: float, stream:bool = False):
         self.model = model
         self.messages = messages or []
         self.temperature = temperature
+        self.stream = stream
 
     def get_messages_dict(self) -> Dict:
         return [message.to_dict() for message in self.messages]
