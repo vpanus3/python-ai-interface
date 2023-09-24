@@ -8,11 +8,14 @@ from models.conversation_models import Conversation, ConversationMessage
 from services.websocket_service import WebSocketService
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-MODEL = os.getevn("OPENAI_MODEL")
+MODEL = os.getenv("OPENAI_MODEL")
 TEMPERATURE = float(os.getenv("OPENAI_Temperature"))
-MAX_TOKENS = os.getevn("OPENAI_MaxTokens")
+MAX_TOKENS = os.getenv("OPENAI_MaxTokens")
 
 class OpenAIService:
+
+    def __init__(self):
+        self.websocket_service = WebSocketService()
 
     def get_chat_messages_from_conversation(self, conversation: Conversation) -> List[ChatMessage]:
         messages = []
@@ -70,24 +73,35 @@ class OpenAIService:
             chat_completion_response= chat_completion_response)
         return conversation
     
-    def stream_user_message(self, user_id, str, user_message: str, conversation: Conversation):
+    async def stream_user_message(self, user_id, str, user_message: str, conversation: Conversation):
         chat_message = ChatMessage(ChatRole.USER, user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
             converation=conversation,
             stream=True)
-        response = openai.ChatCompletion.create(
+        
+        messageCount = 0
+        chat_response = None
+        self.websocket_service.start()
+        for response in openai.ChatCompletion.create(
             model=chat_request.model,
             messages=chat_request.get_messages_dict(),
             temperature=chat_request.temperature,
-            stream=True
-        )
-        chat_completion_response = ChatCompletionResponse.from_chat_completion_response(response)
-        conversation = self.update_converation(
-            user_id=user_id, 
-            chat_message=chat_message, 
-            conversation=conversation,
-            chat_completion_response= chat_completion_response)
+            stream=chat_request.stream
+        ):
+            messageCount = messageCount + 1
+            if (messageCount == 1):
+                chat_response = ChatCompletionResponse(response)
+            else:
+                chat_response.choices[0].text = response.choices[0].text
+            await self.websocket_service.send_message(chat_response)
+
+        # chat_completion_response = ChatCompletionResponse.from_chat_completion_response(response)
+        # conversation = self.update_converation(
+        #     user_id=user_id, 
+        #     chat_message=chat_message, 
+        #     conversation=conversation,
+        #     chat_completion_response= chat_completion_response)
     
     def get_conversation_title(self, user_message: str) -> str:
         prompt = (
