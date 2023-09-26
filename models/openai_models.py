@@ -72,11 +72,11 @@ class ChatCompletionResponse:
             choices.append(chat_choice)
 
         return ChatCompletionResponse(
-            chat_completion.id,
-            chat_completion.object,
-            chat_completion.created,
-            chat_completion.model,
-            choices,
-            chat_completion.usage
+            id = chat_completion.id,
+            object = chat_completion.object,
+            created = chat_completion.created,
+            model = chat_completion.model,
+            choices = choices,
+            usage = chat_completion.usage
         )
     

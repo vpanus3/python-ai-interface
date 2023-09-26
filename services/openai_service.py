@@ -20,14 +20,19 @@ class OpenAIService:
     def get_chat_messages_from_conversation(self, conversation: Conversation) -> List[ChatMessage]:
         messages = []
         for history_message in conversation.messages:
-            simple_message = ChatMessage(history_message.role, history_message.content)
+            simple_message = ChatMessage(role=history_message.role, content=history_message.content
+            )
             messages.append(simple_message)
         return messages
 
     def get_chat_completion_request(self, chat_message: ChatMessage, converation: Conversation, stream: bool = False) -> ChatCompletionRequest:
         chat_messages = self.get_chat_messages_from_conversation(converation)
         chat_messages.append(chat_message)
-        request = ChatCompletionRequest(MODEL, chat_messages, TEMPERATURE, stream)
+        request = ChatCompletionRequest(
+            model= MODEL, 
+            messages = chat_messages, 
+            temperature = TEMPERATURE, 
+            stream = stream)
         return request
     
     def update_converation(self, user_id: str, chat_message: ChatMessage, conversation: Conversation, chat_completion_response: ChatCompletionResponse) -> Conversation:
@@ -36,27 +41,27 @@ class OpenAIService:
         conversation.title = conversation.title if conversation.title else self.get_conversation_title(chat_message.content)
 
         converation_message_request = ConversationMessage(
-            chat_message.content,
-            chat_message.role,
-            chat_completion_response.created,
-            chat_completion_response.model,
-            TEMPERATURE,
-            chat_completion_response.choices[0].finish_reason
+            content = chat_message.content,
+            role = chat_message.role,
+            created = chat_completion_response.created,
+            model = chat_completion_response.model,
+            temperature = TEMPERATURE,
+            finish_reason= chat_completion_response.choices[0].finish_reason
         )
         conversation.messages.append(converation_message_request)
         converation_message_response = ConversationMessage(
-            chat_completion_response.choices[0].message.content,
-            chat_completion_response.choices[0].message.role,
-            chat_completion_response.created,
-            chat_completion_response.model,
-            TEMPERATURE,
-            chat_completion_response.choices[0].finish_reason
+            content = chat_completion_response.choices[0].message.content,
+            role = chat_completion_response.choices[0].message.role,
+            created = chat_completion_response.created,
+            model = chat_completion_response.model,
+            temperature = TEMPERATURE,
+            finish_reason = chat_completion_response.choices[0].finish_reason
         )
         conversation.messages.append(converation_message_response)
         return conversation
     
     def send_user_message(self, user_id: str, user_message: str, conversation: Conversation) -> Conversation:
-        chat_message = ChatMessage(ChatRole.USER, user_message)
+        chat_message = ChatMessage(role=ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
             converation=conversation)
@@ -74,7 +79,7 @@ class OpenAIService:
         return conversation
     
     async def stream_user_message(self, user_id, str, user_message: str, conversation: Conversation):
-        chat_message = ChatMessage(ChatRole.USER, user_message)
+        chat_message = ChatMessage(ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
             converation=conversation,

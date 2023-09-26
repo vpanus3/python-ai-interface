@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<head>
-  <title>Python AI</title>
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('static', filename='flaticon-brain.png') }}"
-  />
-  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-</head>
+<html>
+  <head>
+    <title>Python AI</title>
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='flaticon-brain.png') }}"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+  </head>
 
-<body class="bg-dark">
-  <div id="root"></div>
-</body>
+  <body class="bg-dark">
+    <div id="root"></div>
+  </body>
 
-<script src="{{ url_for('static', filename='dist/bundle.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='dist/bundle.js') }}" defer></script>
+
+</html>
