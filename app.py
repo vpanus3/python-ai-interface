@@ -43,6 +43,19 @@ def conversation_post() -> UserState:
     user_state = state_service.on_conversation_message(conversation)
     return jsonify(user_state.to_dict())
 
+@app.route("/conversation/stream", methods=["GET"])
+async def conversation_stream() -> UserState:
+    user_message = request.form["message"]
+    user_state = state_service.get_user_state()
+    conversation = user_state.conversation or Conversation()
+    conversation = await openai_service.stream_user_message()(
+        user_id=user_state.user_id, 
+        user_message=user_message, 
+        conversation=conversation)    
+    conversation = conversation_service.save_conversation(conversation)
+    user_state = state_service.on_conversation_message(conversation)
+    return jsonify(user_state.to_dict())
+
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
     user_session = session_service.get_user_session()
@@ -67,7 +80,7 @@ def conversation_delete():
     user_session = session_service.get_user_session()
     conversation_service.delete_conversation(
         user_id=user_session.user_id,
-        converation_id=deleted_conversation_id
+        conversation_id=deleted_conversation_id
     )
     user_state = state_service.on_conversation_deleted(deleted_conversation_id)
     return jsonify(user_state.to_dict())
@@ -84,11 +97,4 @@ def conversation_rename():
         title=title
     )
     user_state = state_service.on_conversation_rename(conversation)
-
     return jsonify(user_state.to_dict())
-
-
-def generate_prompt(message):
-    return """ """.format(
-        message
-    )

@@ -25,8 +25,8 @@ class OpenAIService:
             messages.append(simple_message)
         return messages
 
-    def get_chat_completion_request(self, chat_message: ChatMessage, converation: Conversation, stream: bool = False) -> ChatCompletionRequest:
-        chat_messages = self.get_chat_messages_from_conversation(converation)
+    def get_chat_completion_request(self, chat_message: ChatMessage, conversation: Conversation, stream: bool = False) -> ChatCompletionRequest:
+        chat_messages = self.get_chat_messages_from_conversation(conversation)
         chat_messages.append(chat_message)
         request = ChatCompletionRequest(
             model= MODEL, 
@@ -35,12 +35,12 @@ class OpenAIService:
             stream = stream)
         return request
     
-    def update_converation(self, user_id: str, chat_message: ChatMessage, conversation: Conversation, chat_completion_response: ChatCompletionResponse) -> Conversation:
+    def update_conversation(self, user_id: str, chat_message: ChatMessage, conversation: Conversation, chat_completion_response: ChatCompletionResponse) -> Conversation:
         conversation = conversation or Conversation()
         conversation.user_id = conversation.user_id if conversation.user_id else user_id
         conversation.title = conversation.title if conversation.title else self.get_conversation_title(chat_message.content)
 
-        converation_message_request = ConversationMessage(
+        conversation_message_request = ConversationMessage(
             content = chat_message.content,
             role = chat_message.role,
             created = chat_completion_response.created,
@@ -48,8 +48,8 @@ class OpenAIService:
             temperature = TEMPERATURE,
             finish_reason= chat_completion_response.choices[0].finish_reason
         )
-        conversation.messages.append(converation_message_request)
-        converation_message_response = ConversationMessage(
+        conversation.messages.append(conversation_message_request)
+        conversation_message_response = ConversationMessage(
             content = chat_completion_response.choices[0].message.content,
             role = chat_completion_response.choices[0].message.role,
             created = chat_completion_response.created,
@@ -57,21 +57,21 @@ class OpenAIService:
             temperature = TEMPERATURE,
             finish_reason = chat_completion_response.choices[0].finish_reason
         )
-        conversation.messages.append(converation_message_response)
+        conversation.messages.append(conversation_message_response)
         return conversation
     
     def send_user_message(self, user_id: str, user_message: str, conversation: Conversation) -> Conversation:
         chat_message = ChatMessage(role=ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
-            converation=conversation)
+            conversation=conversation)
         response = openai.ChatCompletion.create(
             model=chat_request.model,
             messages=chat_request.get_messages_dict(),
             temperature=chat_request.temperature
         )
         chat_completion_response = ChatCompletionResponse.from_chat_completion_response(response)
-        conversation = self.update_converation(
+        conversation = self.update_conversation(
             user_id=user_id, 
             chat_message=chat_message, 
             conversation=conversation,
@@ -82,11 +82,12 @@ class OpenAIService:
         chat_message = ChatMessage(ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
-            converation=conversation,
-            stream=True)
+            conversation=conversation,
+            stream=True
+        )
         
         messageCount = 0
-        chat_response = None
+        response_aggregate = None
         self.websocket_service.start()
         for response in openai.ChatCompletion.create(
             model=chat_request.model,
@@ -96,17 +97,19 @@ class OpenAIService:
         ):
             messageCount = messageCount + 1
             if (messageCount == 1):
-                chat_response = ChatCompletionResponse(response)
+                response_aggregate = ChatCompletionResponse.from_chat_completion_response(response)
             else:
-                chat_response.choices[0].text = response.choices[0].text
-            await self.websocket_service.send_message(chat_response)
+                response_aggregate.choices[0].text = response_aggregate.choices[0].text + response.choices[0].text
+            # send serializable object to websocket, async issues..
+            await self.websocket_service.send_message(response_aggregate.to_dict())
 
-        # chat_completion_response = ChatCompletionResponse.from_chat_completion_response(response)
-        # conversation = self.update_converation(
-        #     user_id=user_id, 
-        #     chat_message=chat_message, 
-        #     conversation=conversation,
-        #     chat_completion_response= chat_completion_response)
+        chat_completion_response = ChatCompletionResponse.from_chat_completion_response(response_aggregate)
+        conversation = self.update_conversation(
+            user_id=user_id, 
+            chat_message=chat_message, 
+            conversation=conversation,
+            chat_completion_response= chat_completion_response)
+        return conversation
     
     def get_conversation_title(self, user_message: str) -> str:
         prompt = (

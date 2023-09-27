@@ -103,6 +103,34 @@ function App() {
       setMessage('');  // Clear the message input
     }
   };
+
+  // Handle user submitting a streaming message
+  const streamChatMessage = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('message', message);
+  
+    try {
+      const ws = new WebSocket("ws://localhost:8080")
+      const response = await fetch('/conversation/stream', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const updatedUserState = await response.json();       
+        setUserState(updatedUserState);
+      } else {
+        throw new Error('Failed to send chat message');
+      }
+    } catch (err) {
+      console.log(err);
+      setError(err);
+    } finally {
+      setMessage('');  // Clear the message input
+    }
+  };
   
   const onChatMessageChange = (e) => {
     setMessage(e.target.value);
