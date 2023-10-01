@@ -10,6 +10,9 @@ module.exports = {
     path: path.resolve(__dirname, 'static', 'dist')
   },
 
+  // Devtool configuration for Source Maps
+  devtool: 'eval-source-map',  // This line generates Source Maps
+
   // Module configuration
   module: {
     rules: [

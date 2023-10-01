@@ -2,6 +2,8 @@
 
 import os
 import openai
+from tiktoken import Tokenizer
+from tiktoken.model import WordLevel
 from typing import List, Callable
 from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse
 from models.conversation_models import Conversation, ConversationMessage
@@ -106,6 +108,7 @@ class OpenAIService:
                 message = next((msg for msg in conversation.messages if msg.id == response_aggregate.id))
                 if message:
                     message.content = message.content + response.choices[0].message.content
+                    message.finish_reason = response.choices[0].finish_reason
                 else:
                     print("Message not found")
             stream_handler(conversation)

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import io from 'socket.io-client';
 
 function App() {
   const [user_state, setUserState] = useState(null);
@@ -78,35 +79,33 @@ function App() {
   }, [loading, error, user_state]);
 
   useEffect(() => {
-    // Initialize WebSocket
-    const ws = new WebSocket('ws://localhost:8080'); // Replace with your server's address
+    // Initialize Socket.IO connection
+    const socket = io('http://localhost:5000');  // Replace with your server's address and port
 
     // Event handler for receiving messages
-    ws.onmessage = (event) => {
-      var userState = JSON.parse(event.data);
-      setUserState(userState);
-    };
+    socket.on('server_response', (data) => {
+      console.log(data.message)
+    });
 
-    // Event handler for errors
-    ws.onerror = (error) => {
-      console.error(`WebSocket Error: ${error}`);
-    };
+    socket.on('user_state', (data) => {
+      setUserState(data);
+    });
 
     // Event handler for connection opening
-    ws.onopen = () => {
-      console.log('WebSocket connection opened');
-    };
+    socket.on('connect', () => {
+      console.log('Socket.IO connection opened');
+    });
 
     // Event handler for connection closing
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+    socket.on('disconnect', () => {
+      console.log('Socket.IO connection closed');
+    });
 
-    // Cleanup function to close the WebSocket when the component unmounts
+    // Cleanup function to disconnect the Socket.IO connection when the component unmounts
     return () => {
-      ws.close();
+      socket.disconnect();
     };
-  }, []); 
+  }, []);
 
   // Handle user submitting a message
   const sendChatMessage = async (e) => {
@@ -400,7 +399,7 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form onSubmit={streamChatMessage} className="w-100 chat-form">
+              <form onSubmit={sendChatMessage} className="w-100 chat-form">
                 <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />

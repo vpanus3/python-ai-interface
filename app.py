@@ -1,30 +1,26 @@
+import asyncio
 from flask import Flask, redirect, render_template, request, url_for, jsonify
+from flask_socketio import SocketIO, emit
 from models.conversation_models import Conversation
 from models.user_models import UserSession, UserState
 from services.conversation_service import ConversationService
 from services.openai_service import OpenAIService
 from services.session_service import SessionService
 from services.state_service import StateService
-from services.websocket_service import WebSocketService
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - export chat history
 # TODO - Need a loading state for when waiting for message submit
 # TODO - Streaming, stop generation
+# TODO - Manage max tokens of 4097 for chatgpt 3.5
 
 app = Flask(__name__)
 app.secret_key = "f9b0216e-f1e7-4914-8652-0fbcfc0972b7" 
+socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:5000")
 openai_service = OpenAIService()
 conversation_service = ConversationService()
 session_service = SessionService()
 state_service = StateService()
-websocket_service = WebSocketService()
-
-def before_first_request():
-    import asyncio
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(websocket_service.start())
 
 @app.route("/", methods=["GET"])
 def index():
@@ -68,7 +64,7 @@ async def conversation_stream():
 async def conversation_stream_handler(conversation: Conversation):
     # send serializable object to websocket, async issues..
     user_state = state_service.on_conversation_message(conversation)
-    await websocket_service.send_message(user_state.to_dict())
+    #emit('user_state', user_state.to_dict())
 
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
@@ -112,3 +108,10 @@ def conversation_rename():
     )
     user_state = state_service.on_conversation_rename(conversation)
     return jsonify(user_state.to_dict())
+
+@socketio.on('connect')
+def handle_connect():
+    emit('server_response', {'message': 'Greetings from the Server realm!'})
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True, port=5000)

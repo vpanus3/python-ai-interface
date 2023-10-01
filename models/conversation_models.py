@@ -5,7 +5,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Dict
-from models.openai_models import ChatRole, FinishReason, ChatMessage
+from models.openai_models import ChatRole, FinishReason, ChatMessage, ChatUsage
 
 @dataclass
 class ConversationMessage:
@@ -16,6 +16,7 @@ class ConversationMessage:
     model: str = field(default=None)
     temperature: int = field(default=None)
     finish_reason: FinishReason = field(default=None)
+    tokens: int = field(default=0)
 
     def to_json(self):
         return json.dumps(self.to_dict(), default=lambda o: o.value if isinstance(o, Enum) else None)
@@ -28,7 +29,8 @@ class ConversationMessage:
             'created': self.created,
             'model': self.model,
             'temperature': self.temperature,
-            'finish_reason': self.finish_reason.value if self.finish_reason else None
+            'finish_reason': self.finish_reason.value if self.finish_reason else None,
+            'tokens': self.tokens
         }
 
     @classmethod
@@ -51,7 +53,8 @@ class ConversationMessage:
             created=message_dict['created'],
             model=message_dict['model'],
             temperature=message_dict['temperature'],
-            finish_reason=finish_reason
+            finish_reason=finish_reason,
+            tokens=message_dict['tokens']
         )
 
 @dataclass

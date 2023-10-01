@@ -8,17 +8,20 @@
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
-            "module": "flask",
+            //"module": "flask",
+            "program": "${workspaceFolder}/app.py",
             "env": {
                 "FLASK_APP": "app.py",
                 "FLASK_ENV": "development",
-                "FLASK_DEBUG": "1"
+                "FLASK_DEBUG": "1",
+                "GEVENT_SUPPORT": "True"
             },
-            "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
+            "args": [],
+            // "args": [
+            //     "run",
+            //     "--no-debugger",
+            //     "--no-reload"
+            // ],
             "jinja": true,
             "justMyCode": true
         }
