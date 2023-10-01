@@ -77,6 +77,37 @@ function App() {
     }
   }, [loading, error, user_state]);
 
+  useEffect(() => {
+    // Initialize WebSocket
+    const ws = new WebSocket('ws://localhost:8080'); // Replace with your server's address
+
+    // Event handler for receiving messages
+    ws.onmessage = (event) => {
+      var userState = JSON.parse(event.data);
+      setUserState(userState);
+    };
+
+    // Event handler for errors
+    ws.onerror = (error) => {
+      console.error(`WebSocket Error: ${error}`);
+    };
+
+    // Event handler for connection opening
+    ws.onopen = () => {
+      console.log('WebSocket connection opened');
+    };
+
+    // Event handler for connection closing
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    // Cleanup function to close the WebSocket when the component unmounts
+    return () => {
+      ws.close();
+    };
+  }, []); 
+
   // Handle user submitting a message
   const sendChatMessage = async (e) => {
     e.preventDefault();
@@ -112,7 +143,6 @@ function App() {
     formData.append('message', message);
   
     try {
-      const ws = new WebSocket("ws://localhost:8080")
       const response = await fetch('/conversation/stream', {
         method: 'POST',
         body: formData,
@@ -131,7 +161,7 @@ function App() {
       setMessage('');  // Clear the message input
     }
   };
-  
+
   const onChatMessageChange = (e) => {
     setMessage(e.target.value);
   };
@@ -370,7 +400,7 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form onSubmit={sendChatMessage} className="w-100 chat-form">
+              <form onSubmit={streamChatMessage} className="w-100 chat-form">
                 <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />

@@ -1,6 +1,7 @@
 # openai.py
 
 from enum import Enum
+import uuid
 from typing import List, Dict, Optional
 
 class ChatRole(Enum):
@@ -78,5 +79,29 @@ class ChatCompletionResponse:
             model = chat_completion.model,
             choices = choices,
             usage = chat_completion.usage
+        )
+    
+    @classmethod
+    def from_streaming_completion_chunk(cls, chunk_completion):
+        choices = []
+        if chunk_completion and len(chunk_completion.choices) > 0:
+            choice = chunk_completion.choices[0]
+            role = ChatRole.ASSISTANT
+            content = ''
+            if choice.get('delta') and choice['delta'].get('role') is not None:
+                role = ChatRole(choice.delta.role)
+            if choice.get('delta') and choice['delta'].get('content') is not None:
+                content = choice.delta.content
+            chat_message = ChatMessage(role, content)
+            chat_choice = ChatChoice(choice.index, chat_message, FinishReason(choice.finish_reason))
+            choices.append(chat_choice)
+
+        return ChatCompletionResponse(
+            id = chunk_completion.id,
+            object = chunk_completion.object,
+            created = chunk_completion.created,
+            model = chunk_completion.model,
+            choices = choices,
+            usage = ''
         )
     

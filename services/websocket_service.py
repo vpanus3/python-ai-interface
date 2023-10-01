@@ -15,11 +15,10 @@ class WebSocketService:
         except websockets.ConnectionClosed:
             print("Connection closed.")
 
-    def start(self):
+    async def start(self):
         self.server = websockets.serve(self.handler, 'localhost', 8080)
-        print("WebSocket server started.")
-        self.loop.run_until_complete(self.server)
-        self.loop.run_forever()
+        await self.loop.run_until_complete(self.server)
+        await self.loop.run_forever()
 
     def stop(self):
         self.server.ws_server.close()

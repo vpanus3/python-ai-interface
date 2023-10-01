@@ -1,10 +1,11 @@
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from models.conversation_models import Conversation
-from models.user_models import UserSession, UserConversation, UserState
+from models.user_models import UserSession, UserState
 from services.conversation_service import ConversationService
 from services.openai_service import OpenAIService
 from services.session_service import SessionService
 from services.state_service import StateService
+from services.websocket_service import WebSocketService
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - export chat history
@@ -17,6 +18,13 @@ openai_service = OpenAIService()
 conversation_service = ConversationService()
 session_service = SessionService()
 state_service = StateService()
+websocket_service = WebSocketService()
+
+def before_first_request():
+    import asyncio
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(websocket_service.start())
 
 @app.route("/", methods=["GET"])
 def index():
@@ -43,18 +51,24 @@ def conversation_post() -> UserState:
     user_state = state_service.on_conversation_message(conversation)
     return jsonify(user_state.to_dict())
 
-@app.route("/conversation/stream", methods=["GET"])
-async def conversation_stream() -> UserState:
+@app.route("/conversation/stream", methods=["POST"])
+async def conversation_stream():
     user_message = request.form["message"]
     user_state = state_service.get_user_state()
     conversation = user_state.conversation or Conversation()
-    conversation = await openai_service.stream_user_message()(
+    conversation = await openai_service.stream_user_message(
         user_id=user_state.user_id, 
         user_message=user_message, 
-        conversation=conversation)    
-    conversation = conversation_service.save_conversation(conversation)
+        conversation=conversation,
+        stream_handler=conversation_stream_handler)
     user_state = state_service.on_conversation_message(conversation)
+    conversation = conversation_service.save_conversation(conversation)
     return jsonify(user_state.to_dict())
+
+async def conversation_stream_handler(conversation: Conversation):
+    # send serializable object to websocket, async issues..
+    user_state = state_service.on_conversation_message(conversation)
+    await websocket_service.send_message(user_state.to_dict())
 
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
