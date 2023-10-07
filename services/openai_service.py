@@ -75,7 +75,7 @@ class OpenAIService:
             chat_completion_response= chat_completion_response)
         return conversation
     
-    def stream_user_message(self, user_id: str, user_message: str, conversation: Conversation, stream_handler: Callable[[Conversation], None]):
+    def stream_user_message(self, user_id: str, user_message: str, conversation: Conversation, stream_handler: Callable[[Conversation, bool], None]):
         chat_message = ChatMessage(ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
@@ -91,6 +91,7 @@ class OpenAIService:
             temperature=chat_request.temperature,
             stream=chat_request.stream
         ):
+            finished = False
             messageCount = messageCount + 1
             response = ChatCompletionResponse.from_streaming_completion_chunk(chunk_completion)
             if (messageCount == 1):
@@ -107,11 +108,12 @@ class OpenAIService:
                 if message:
                     message.content = message.content + response.choices[0].message.content
                     message.finish_reason = response.choices[0].finish_reason
+                    if (message.finish_reason is not None): finished = True
                 else:
                     print("Message not found")
-            stream_handler(conversation)
+            stream_handler(conversation, finished)
         
-        #return conversation
+        return conversation
     
     def get_conversation_title(self, user_message: str) -> str:
         prompt = (

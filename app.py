@@ -57,12 +57,11 @@ def conversation_stream():
         user_message=user_message, 
         conversation=conversation,
         stream_handler=conversation_stream_handler)
-    user_state = state_service.on_conversation_message(conversation)
-    conversation = conversation_service.save_conversation(conversation)
-    return jsonify(user_state.to_dict())
+    return jsonify({ "message": "conversation stream started" })
 
-def conversation_stream_handler(conversation: Conversation):
+def conversation_stream_handler(conversation: Conversation, finished: bool):
     # send serializable object to websocket, async issues..
+    if (finished): conversation = conversation_service.save_conversation(conversation)
     user_state = state_service.on_conversation_message(conversation)
     socketio.emit('user_state', user_state.to_dict())
 

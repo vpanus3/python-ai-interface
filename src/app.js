@@ -90,8 +90,9 @@ function App() {
     });
 
     socket.on('user_state', (data) => {
-      console.log(JSON.stringify(data));
-      //setUserState(data);
+      var json = JSON.stringify(data);
+      console.log("got streaming response via websocket");
+      setUserState(data);
     });
 
     // Event handler for connection opening
@@ -151,9 +152,7 @@ function App() {
       });
   
       if (response.ok) {
-        const updatedUserState = await response.json();
-        console.log(updatedUserState);       
-        //setUserState(updatedUserState);
+        console.log("conversation stream started");       
       } else {
         throw new Error('Failed to send chat message');
       }
