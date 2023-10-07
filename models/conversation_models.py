@@ -30,7 +30,6 @@ class ConversationMessage:
             'model': self.model,
             'temperature': self.temperature,
             'finish_reason': self.finish_reason.value if self.finish_reason else None,
-            'tokens': self.tokens
         }
 
     @classmethod
@@ -54,7 +53,6 @@ class ConversationMessage:
             model=message_dict['model'],
             temperature=message_dict['temperature'],
             finish_reason=finish_reason,
-            tokens=message_dict['tokens']
         )
 
 @dataclass

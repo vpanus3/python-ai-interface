@@ -48,11 +48,11 @@ def conversation_post() -> UserState:
     return jsonify(user_state.to_dict())
 
 @app.route("/conversation/stream", methods=["POST"])
-async def conversation_stream():
+def conversation_stream():
     user_message = request.form["message"]
     user_state = state_service.get_user_state()
     conversation = user_state.conversation or Conversation()
-    conversation = await openai_service.stream_user_message(
+    conversation = openai_service.stream_user_message(
         user_id=user_state.user_id, 
         user_message=user_message, 
         conversation=conversation,
@@ -61,10 +61,10 @@ async def conversation_stream():
     conversation = conversation_service.save_conversation(conversation)
     return jsonify(user_state.to_dict())
 
-async def conversation_stream_handler(conversation: Conversation):
+def conversation_stream_handler(conversation: Conversation):
     # send serializable object to websocket, async issues..
     user_state = state_service.on_conversation_message(conversation)
-    #emit('user_state', user_state.to_dict())
+    socketio.emit('user_state', user_state.to_dict())
 
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
@@ -114,4 +114,4 @@ def handle_connect():
     emit('server_response', {'message': 'Greetings from the Server realm!'})
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000)
+    socketio.run(app)

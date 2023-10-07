@@ -2,8 +2,6 @@
 
 import os
 import openai
-from tiktoken import Tokenizer
-from tiktoken.model import WordLevel
 from typing import List, Callable
 from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse
 from models.conversation_models import Conversation, ConversationMessage
@@ -77,7 +75,7 @@ class OpenAIService:
             chat_completion_response= chat_completion_response)
         return conversation
     
-    async def stream_user_message(self, user_id: str, user_message: str, conversation: Conversation, stream_handler: Callable[[Conversation], None]):
+    def stream_user_message(self, user_id: str, user_message: str, conversation: Conversation, stream_handler: Callable[[Conversation], None]):
         chat_message = ChatMessage(ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
@@ -113,7 +111,7 @@ class OpenAIService:
                     print("Message not found")
             stream_handler(conversation)
         
-        return conversation
+        #return conversation
     
     def get_conversation_title(self, user_message: str) -> str:
         prompt = (

@@ -3,6 +3,10 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import io from 'socket.io-client';
 
+// Initialize Socket.IO connection
+const socket = io('http://localhost:5000');  // Replace with your server's address and port
+
+
 function App() {
   const [user_state, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -79,8 +83,6 @@ function App() {
   }, [loading, error, user_state]);
 
   useEffect(() => {
-    // Initialize Socket.IO connection
-    const socket = io('http://localhost:5000');  // Replace with your server's address and port
 
     // Event handler for receiving messages
     socket.on('server_response', (data) => {
@@ -88,7 +90,8 @@ function App() {
     });
 
     socket.on('user_state', (data) => {
-      setUserState(data);
+      console.log(JSON.stringify(data));
+      //setUserState(data);
     });
 
     // Event handler for connection opening
@@ -148,8 +151,9 @@ function App() {
       });
   
       if (response.ok) {
-        const updatedUserState = await response.json();       
-        setUserState(updatedUserState);
+        const updatedUserState = await response.json();
+        console.log(updatedUserState);       
+        //setUserState(updatedUserState);
       } else {
         throw new Error('Failed to send chat message');
       }
@@ -399,7 +403,7 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form onSubmit={sendChatMessage} className="w-100 chat-form">
+              <form onSubmit={streamChatMessage} className="w-100 chat-form">
                 <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />
