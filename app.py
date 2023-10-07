@@ -1,4 +1,3 @@
-import asyncio
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from flask_socketio import SocketIO, emit
 from models.conversation_models import Conversation
@@ -11,7 +10,7 @@ from services.state_service import StateService
 # TODO - system prompt - create, don't expose, store with history
 # TODO - export chat history
 # TODO - Need a loading state for when waiting for message submit
-# TODO - Streaming, stop generation
+# TODO - stop streaming generation
 # TODO - Manage max tokens of 4097 for chatgpt 3.5
 
 app = Flask(__name__)
@@ -60,7 +59,6 @@ def conversation_stream():
     return jsonify({ "message": "conversation stream started" })
 
 def conversation_stream_handler(conversation: Conversation, finished: bool):
-    # send serializable object to websocket, async issues..
     if (finished): conversation = conversation_service.save_conversation(conversation)
     user_state = state_service.on_conversation_message(conversation)
     socketio.emit('user_state', user_state.to_dict())

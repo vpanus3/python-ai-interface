@@ -3,9 +3,11 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import io from 'socket.io-client';
 
+// Enable Streaming or not
+const streamingEnabled = true;
+
 // Initialize Socket.IO connection
 const socket = io('http://localhost:5000');  // Replace with your server's address and port
-
 
 function App() {
   const [user_state, setUserState] = useState(null);
@@ -110,6 +112,15 @@ function App() {
       socket.disconnect();
     };
   }, []);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();  // Prevent the default form submission behavior
+    if (streamingEnabled) {
+        streamChatMessage(e);
+    } else {
+        sendChatMessage(e);
+    }
+  };
 
   // Handle user submitting a message
   const sendChatMessage = async (e) => {
@@ -402,7 +413,7 @@ function App() {
           </div>
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
-              <form onSubmit={streamChatMessage} className="w-100 chat-form">
+              <form onSubmit={handleSendMessage} className="w-100 chat-form">
                 <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
                 <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />
