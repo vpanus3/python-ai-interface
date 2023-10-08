@@ -10,8 +10,8 @@ from services.state_service import StateService
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - export chat history
-# TODO - stop streaming generation
 # TODO - Manage max tokens of 4097 for chatgpt 3.5
+# TODO - Set conversation generation at bottom like chat gpt
 
 app = Flask(__name__)
 app.secret_key = "f9b0216e-f1e7-4914-8652-0fbcfc0972b7" 
