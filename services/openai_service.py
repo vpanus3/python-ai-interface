@@ -3,7 +3,7 @@
 import os
 import openai
 from typing import List, Callable
-from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse
+from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse, ChatState
 from models.conversation_models import Conversation, ConversationMessage
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -11,7 +11,27 @@ MODEL = os.getenv("OPENAI_MODEL")
 TEMPERATURE = float(os.getenv("OPENAI_Temperature"))
 MAX_TOKENS = os.getenv("OPENAI_MaxTokens")
 
+# Track ongoing chat states
+CHAT_STATE = {}
+
 class OpenAIService:
+
+    def chat_is_streaming(self, conversation_id: str) -> bool:
+        streaming = False
+        state = CHAT_STATE.get(conversation_id, ChatState.NULL)
+        if (state == ChatState.STREAMING): streaming = True
+        return streaming
+
+    def chat_is_cancelling(self, conversation_id: str) -> bool:
+        streaming = False
+        state = CHAT_STATE.get(conversation_id, ChatState.NULL)
+        if (state == ChatState.CANCELLING): streaming = True
+        return streaming
+    
+    def chat_set_state(self, conversation_id: str, streaming_state: ChatState):
+        if (streaming_state is not None):
+            CHAT_STATE[conversation_id] = streaming_state
+        else: del CHAT_STATE[conversation_id]
 
     def get_chat_messages_from_conversation(self, conversation: Conversation) -> List[ChatMessage]:
         messages = []
@@ -62,6 +82,7 @@ class OpenAIService:
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
             conversation=conversation)
+        self.chat_set_state(conversation.id, ChatState.STREAMING)
         response = openai.ChatCompletion.create(
             model=chat_request.model,
             messages=chat_request.get_messages_dict(),
@@ -73,18 +94,21 @@ class OpenAIService:
             chat_message=chat_message, 
             conversation=conversation,
             chat_completion_response= chat_completion_response)
+        self.chat_set_state(conversation.id, ChatState.NULL)
         return conversation
     
     def stream_user_message(self, user_id: str, user_message: str, conversation: Conversation, stream_handler: Callable[[Conversation, bool], None]):
+        
         chat_message = ChatMessage(ChatRole.USER, content=user_message)
         chat_request = self.get_chat_completion_request(
             chat_message=chat_message, 
             conversation=conversation,
             stream=True
         )
-        
+               
         messageCount = 0
         response_aggregate = None
+        self.chat_set_state(conversation.id, ChatState.STREAMING)
         for chunk_completion in openai.ChatCompletion.create(
             model=chat_request.model,
             messages=chat_request.get_messages_dict(),
@@ -92,6 +116,7 @@ class OpenAIService:
             stream=chat_request.stream
         ):
             finished = False
+            cancelling = self.chat_is_cancelling(conversation.id)
             messageCount = messageCount + 1
             response = ChatCompletionResponse.from_streaming_completion_chunk(chunk_completion)
             if (messageCount == 1):
@@ -108,7 +133,9 @@ class OpenAIService:
                 if message:
                     message.content = message.content + response.choices[0].message.content
                     message.finish_reason = response.choices[0].finish_reason
-                    if (message.finish_reason is not None): finished = True
+                    if (message.finish_reason is not None): 
+                        finished = True
+                        self.chat_set_state(conversation.id, ChatState.NULL)
                 else:
                     print("Message not found")
             stream_handler(conversation, finished)

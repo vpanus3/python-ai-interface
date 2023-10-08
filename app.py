@@ -1,5 +1,5 @@
-from flask import Flask, redirect, render_template, request, url_for, jsonify
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO
 from models.conversation_models import Conversation
 from models.user_models import UserSession, UserState
 from services.conversation_service import ConversationService
@@ -108,7 +108,7 @@ def conversation_rename():
 
 @socketio.on('connect')
 def handle_connect():
-    emit('server_response', {'message': 'Greetings from the Server realm!'})
+    socketio.emit('server_response', {'message': 'Greetings from the Server realm!'})
 
 if __name__ == '__main__':
     socketio.run(app)

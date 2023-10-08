@@ -1,7 +1,6 @@
 # openai.py
 
 from enum import Enum
-import uuid
 from typing import List, Dict, Optional
 
 class ChatRole(Enum):
@@ -15,6 +14,11 @@ class FinishReason(Enum):
     FUNCTION_CALL = 'function_call'
     CONTENT_FILTER = 'content_filter'
     NULL = None
+
+class ChatState(Enum):
+    NULL = None
+    STREAMING = 'streaming',
+    CANCELLING = 'cancelling'
 
 class ChatMessage:
     

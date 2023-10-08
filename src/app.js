@@ -14,8 +14,13 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
+  const [receiving, setReceiving] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [newTitle, setNewTitle] = useState('');
+
+  const getUniqueId = function(){
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
+  }
 
   // Load session immediately
   useEffect(() => {
@@ -126,6 +131,10 @@ function App() {
   const sendChatMessage = async (e) => {
     e.preventDefault();
   
+    // Don't allow starting another message
+    if (receiving) { return; }
+    setReceiving(true);
+
     const formData = new FormData();
     formData.append('message', message);
   
@@ -145,7 +154,8 @@ function App() {
       console.log(err);
       setError(err);
     } finally {
-      setMessage('');  // Clear the message input
+      setMessage('');
+      setReceiving(false);
     }
   };
 
@@ -153,6 +163,10 @@ function App() {
   const streamChatMessage = async (e) => {
     e.preventDefault();
   
+    // Don't allow starting another message
+    if (receiving) { return; }
+    setReceiving(true);
+
     const formData = new FormData();
     formData.append('message', message);
   
@@ -163,7 +177,8 @@ function App() {
       });
   
       if (response.ok) {
-        console.log("conversation stream started");       
+        const streamResponse = await response.json();
+        console.log(streamResponse.message);       
       } else {
         throw new Error('Failed to send chat message');
       }
@@ -171,7 +186,8 @@ function App() {
       console.log(err);
       setError(err);
     } finally {
-      setMessage('');  // Clear the message input
+      setMessage('');
+      setReceiving(false);
     }
   };
 
