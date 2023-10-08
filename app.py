@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from models.conversation_models import Conversation
+from models.openai_models import ChatState
 from models.user_models import UserSession, UserState
 from services.conversation_service import ConversationService
 from services.openai_service import OpenAIService
@@ -9,7 +10,6 @@ from services.state_service import StateService
 
 # TODO - system prompt - create, don't expose, store with history
 # TODO - export chat history
-# TODO - Need a loading state for when waiting for message submit
 # TODO - stop streaming generation
 # TODO - Manage max tokens of 4097 for chatgpt 3.5
 
@@ -63,6 +63,12 @@ def conversation_stream_handler(conversation: Conversation, finished: bool):
     user_state = state_service.on_conversation_message(conversation)
     socketio.emit('user_state', user_state.to_dict())
 
+@app.route("/conversation/stop", methods=["POST"])
+def conversation_stop():
+    conversation_id = request.args.get('conversation_id', None)
+    openai_service.chat_set_state(conversation_id, ChatState.CANCELLING)
+    return jsonify({ "message": "conversation stream cancelled" })
+
 @app.route("/conversation/create", methods=["POST"])
 def conversation_create():
     user_session = session_service.get_user_session()
@@ -108,7 +114,7 @@ def conversation_rename():
 
 @socketio.on('connect')
 def handle_connect():
-    socketio.emit('server_response', {'message': 'Greetings from the Server realm!'})
+    socketio.emit('server_response', {'message': 'Socket.IO connection connected'})
 
 if __name__ == '__main__':
     socketio.run(app)

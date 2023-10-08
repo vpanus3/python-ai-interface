@@ -3,7 +3,7 @@
 import os
 import openai
 from typing import List, Callable
-from models.openai_models import ChatRole, ChatMessage, ChatCompletionRequest, ChatCompletionResponse, ChatState
+from models.openai_models import ChatRole, FinishReason, ChatMessage, ChatCompletionRequest, ChatCompletionResponse, ChatState
 from models.conversation_models import Conversation, ConversationMessage
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -18,19 +18,19 @@ class OpenAIService:
 
     def chat_is_streaming(self, conversation_id: str) -> bool:
         streaming = False
-        state = CHAT_STATE.get(conversation_id, ChatState.NULL)
-        if (state == ChatState.STREAMING): streaming = True
+        state = CHAT_STATE.get(conversation_id, ChatState.NULL.value)
+        if (state == ChatState.STREAMING.value): streaming = True
         return streaming
 
     def chat_is_cancelling(self, conversation_id: str) -> bool:
         streaming = False
-        state = CHAT_STATE.get(conversation_id, ChatState.NULL)
-        if (state == ChatState.CANCELLING): streaming = True
+        state = CHAT_STATE.get(conversation_id, ChatState.NULL.value)
+        if (state == ChatState.CANCELLING.value): streaming = True
         return streaming
     
     def chat_set_state(self, conversation_id: str, streaming_state: ChatState):
         if (streaming_state is not None):
-            CHAT_STATE[conversation_id] = streaming_state
+            CHAT_STATE[conversation_id] = streaming_state.value
         else: del CHAT_STATE[conversation_id]
 
     def get_chat_messages_from_conversation(self, conversation: Conversation) -> List[ChatMessage]:
@@ -128,17 +128,19 @@ class OpenAIService:
                     chat_completion_response = response_aggregate
                 )
             else:
-                # Find message.id that matches response.id and update it
                 message = next((msg for msg in conversation.messages if msg.id == response_aggregate.id))
                 if message:
                     message.content = message.content + response.choices[0].message.content
                     message.finish_reason = response.choices[0].finish_reason
-                    if (message.finish_reason is not None): 
+                    if (cancelling or message.finish_reason is not None): 
                         finished = True
                         self.chat_set_state(conversation.id, ChatState.NULL)
                 else:
                     print("Message not found")
+
             stream_handler(conversation, finished)
+            
+            if (cancelling == True): break
         
         return conversation
     

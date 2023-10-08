@@ -181,16 +181,16 @@ body.bg-dark {
           width: 25px;
       }
 
-          .btn-chat-generate:focus {
-            outline: 2px solid #007bff;
-            box-shadow: 0 0 5px #007bff;
-          }
+        .btn-chat-generate:focus {
+          outline: 2px solid #007bff;
+          box-shadow: 0 0 5px #007bff;
+        }
 
-          .btn-chat-generate img.img-fluid {
-            width: 23px;
-            height: 23px;
-            vertical-align: middle;
-          }
+        .btn-chat-generate img.img-fluid {
+          width: 23px;
+          height: 23px;
+          vertical-align: middle;
+        }
 
   .chat-responses-container {
     border: 1px solid #555;

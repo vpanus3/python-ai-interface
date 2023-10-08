@@ -14,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
-  const [receiving, setReceiving] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [newTitle, setNewTitle] = useState('');
 
@@ -119,7 +119,7 @@ function App() {
   }, []);
 
   const handleSendMessage = (e) => {
-    e.preventDefault();  // Prevent the default form submission behavior
+    e.preventDefault();
     if (streamingEnabled) {
         streamChatMessage(e);
     } else {
@@ -132,8 +132,8 @@ function App() {
     e.preventDefault();
   
     // Don't allow starting another message
-    if (receiving) { return; }
-    setReceiving(true);
+    if (streaming) { return; }
+    setStreaming(true);
 
     const formData = new FormData();
     formData.append('message', message);
@@ -155,7 +155,7 @@ function App() {
       setError(err);
     } finally {
       setMessage('');
-      setReceiving(false);
+      setStreaming(false);
     }
   };
 
@@ -164,8 +164,8 @@ function App() {
     e.preventDefault();
   
     // Don't allow starting another message
-    if (receiving) { return; }
-    setReceiving(true);
+    if (streaming) { return; }
+    setStreaming(true);
 
     const formData = new FormData();
     formData.append('message', message);
@@ -187,7 +187,7 @@ function App() {
       setError(err);
     } finally {
       setMessage('');
-      setReceiving(false);
+      setStreaming(false);
     }
   };
 
@@ -246,6 +246,25 @@ function App() {
         } else {
           throw new Error('Failed to delete conversation');
         }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const stopStreaming = async (e) => {
+    e.preventDefault();
+    try {
+      let conversationId = user_state.conversation.id
+      const response = await fetch(`/conversation/stop?conversation_id=${conversationId}`, {
+        method: 'POST'
+      });
+  
+      if (response.ok) {
+        const stopResponse = await response.json();
+        console.log(stopResponse.message);
+      } else {
+        throw new Error('Failed to stop streaming');
       }
     } catch (err) {
       console.error(err);
@@ -430,9 +449,19 @@ function App() {
           <div className="row p-2">
             <div className="input-group mb-3 chat-form-container">
               <form onSubmit={handleSendMessage} className="w-100 chat-form">
-                <textarea name="message" className="chat-textarea" placeholder="Send a message" required value={message} onChange={onChatMessageChange}></textarea>
-                <button type="submit" className="btn btn-secondary btn-chat-generate" id="btn-chat-generate">
+                <textarea 
+                  name="message" 
+                  className="chat-textarea" 
+                  placeholder="Send a message" 
+                  required value={message} 
+                  disabled={streaming}
+                  onChange={onChatMessageChange}>
+                </textarea>
+                <button type="submit" className={`btn btn-secondary btn-chat-generate ${streaming ? 'd-none' : ''}`} disabled={streaming}>
                   <img src="/static/flaticon-right-arrow.png" alt="Send Message" className="img-fluid" />
+                </button>
+                <button type="button" className={`btn btn-secondary btn-chat-generate ${!streaming ? 'd-none': ''}`} disabled={!streaming} onClick={stopStreaming}>
+                  <img src="/static/flaticon-close-button.png" alt="Send Message" className="img-fluid" />
                 </button>
               </form>
             </div>
@@ -479,6 +508,7 @@ function App() {
         <div><a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by NajmunNahar - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/speech-bubble" title="speech bubble icons">Speech bubble icons created by Smashicons - Flaticon</a></div>
         <div><a href="https://www.flaticon.com/free-icons/duplicate" title="duplicate icons">Duplicate icons created by Erix - Flaticon</a></div>
+        <div><a href="https://www.flaticon.com/free-icons/close-button" title="close button icons">Close button icons created by Ponti Project - Flaticon</a></div>
       </div>
     </div>
   )
